@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Flashcards — Florida Civic Literacy</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f2efe8;--surface:#e8e4da;--surface2:#ddd8cc;--border:#c8c0b0;
+  --text:#18140c;--text2:#4a4538;--text3:#8a8070;
+  --accent:#1a50c0;--green:#1a9157;--red:#c0384a;--amber:#b87418;
+}
+[data-theme="dark"]{
+  --bg:#0f1117;--surface:#181c27;--surface2:#1e2336;--border:#2a3050;
+  --text:#e8eaf2;--text2:#8b92b8;--text3:#555e85;
+  --accent:#4f8ef7;--green:#3db87a;--red:#e05c6a;--amber:#e8a838;
+}
+html,body{height:100%;font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text)}
+/* ── TOP BAR ── */
+.topbar{height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;padding:0 20px;flex-shrink:0;position:sticky;top:0;z-index:50}
+a.back{text-decoration:none;color:var(--text3);font-size:13px;font-weight:500;display:flex;align-items:center;gap:4px;transition:.2s}
+a.back:hover{color:var(--accent)}
+.topbar-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;flex:1}
+.topbar-title span{color:var(--accent)}
+.icon-btn{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-size:12px;font-weight:600;color:var(--text2);cursor:pointer;font-family:inherit;transition:.2s;white-space:nowrap}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent)}
+/* ── LAYOUT ── */
+.page{max-width:1200px;margin:0 auto;padding:24px 20px 60px}
+/* ── FILTER ROW ── */
+.filter-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px;align-items:center}
+.filt{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s}
+.filt:hover{border-color:var(--accent);color:var(--accent)}
+.filt.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.filt.rv{border-color:var(--red);color:var(--red)}
+.filt.rv.on{background:var(--red);color:#fff}
+.filt.al{border-color:var(--amber);color:var(--amber)}
+.filt.al.on{background:var(--amber);color:#fff}
+.spacer{flex:1}
+/* ── STATS ROW ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;text-align:center}
+.stat-l{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.stat-v{font-size:22px;font-weight:700;margin-top:2px;color:var(--text)}
+/* ── GRID VIEW ── */
+#gridView{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.fc{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s;display:flex;flex-direction:column;min-height:220px;position:relative}
+.fc:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.1)}
+.fc-badge{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);padding:10px 14px 0}
+.fc-rv{position:absolute;top:9px;right:9px;font-size:14px}
+.fc-q{padding:10px 14px 8px;font-size:14px;font-weight:600;color:var(--text);line-height:1.4;flex:1}
+.fc-divider{height:1px;background:var(--border);margin:0 14px}
+.fc-a{flex:1;padding:10px 14px 14px;overflow-y:auto;font-size:12.5px;line-height:1.7;color:var(--text2);text-align:center;display:flex;flex-direction:column;justify-content:center;scrollbar-width:thin;display:none}
+.fc-a-inner{width:100%;text-align:center}
+.fc-a ul,.fc-a ol{padding-left:18px;margin:5px 0;text-align:left;display:inline-block}
+.fc-a li{margin:3px 0;line-height:1.55}
+.fc-a strong{color:var(--text)}
+.fc.flipped .fc-q{display:none}
+.fc.flipped .fc-divider{display:none}
+.fc.flipped .fc-a{display:flex}
+.fc.flipped .fc-badge{display:none}
+/* ── STUDY MODE ── */
+#studyView{display:none}
+.study-wrap{max-width:680px;margin:0 auto}
+.study-prog-bar{height:4px;background:var(--surface2);border-radius:2px;margin-bottom:16px;overflow:hidden}
+.study-prog-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .3s}
+.study-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.study-counter{font-size:13px;color:var(--text3);font-weight:600}
+.study-cat{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);background:var(--surface2);padding:3px 9px;border-radius:20px}
+.study-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;min-height:340px;display:flex;flex-direction:column;cursor:pointer;transition:box-shadow .2s}
+.study-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.study-q{flex:1;padding:36px 36px 24px;font-size:18px;font-weight:600;color:var(--text);line-height:1.5;display:flex;align-items:center;justify-content:center;text-align:center;min-height:220px}
+.study-divider{height:1px;background:var(--border)}
+.study-a{flex:1;padding:24px 36px;overflow-y:auto;font-size:14px;line-height:1.7;color:var(--text2);text-align:center;display:flex;flex-direction:column;justify-content:center;scrollbar-width:thin;display:none;min-height:160px}
+.study-a-inner{width:100%;text-align:center}
+.study-a ul,.study-a ol{padding-left:20px;margin:7px 0;text-align:left;display:inline-block}
+.study-a li{margin:5px 0;line-height:1.6}
+.study-a strong{color:var(--text)}
+.study-hint{padding:18px;text-align:center;color:var(--text3);font-size:13px;font-style:italic}
+.study-actions{display:none;flex-direction:column;gap:10px;margin-top:14px}
+.study-btns{display:flex;gap:8px}
+.study-btn{flex:1;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--surface);font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;font-family:inherit;transition:.2s}
+.study-btn:hover{border-color:var(--accent);color:var(--accent)}
+.study-btn.got{border-color:var(--green);color:var(--green)}
+.study-btn.got:hover{background:var(--green);color:#fff}
+.study-btn.al{border-color:var(--amber);color:var(--amber)}
+.study-btn.al:hover{background:var(--amber);color:#fff}
+.study-btn.rv{border-color:var(--red);color:var(--red)}
+.study-btn.rv:hover{background:var(--red);color:#fff}
+.nav-btns{display:flex;gap:8px}
+.nav-btn{flex:1;padding:10px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;font-family:inherit;transition:.2s}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent)}
+.kbd{font-size:10px;opacity:.6;margin-left:5px}
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-icon{font-size:40px;margin-bottom:12px}
+/* ── MOBILE ── */
+@media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr}#gridView{grid-template-columns:1fr 1fr}.study-q{font-size:15px;padding:24px 20px 16px}.study-a{padding:16px 20px}.topbar-title{display:none}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="back" href="index.html">← Hub</a>
+  <div class="topbar-title">FCLE <span>Flashcards</span></div>
+  <button class="icon-btn" id="modeBtn" onclick="toggleMode()">📖 Study Mode</button>
+  <button class="icon-btn" onclick="exportAnki()">⬇ Anki Export</button>
+  <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌙 Dark</button>
+</div>
+<div class="page">
+  <div class="filter-row" id="filterRow"></div>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-l">Total</div><div class="stat-v" id="sTotal">0</div></div>
+    <div class="stat"><div class="stat-l">Showing</div><div class="stat-v" id="sShowing">0</div></div>
+    <div class="stat"><div class="stat-l">⚑ Review</div><div class="stat-v" id="sReview" style="color:var(--red)">0</div></div>
+    <div class="stat"><div class="stat-l">~ Almost</div><div class="stat-v" id="sAlmost" style="color:var(--amber)">0</div></div>
+  </div>
+  <div id="gridView"></div>
+  <div id="studyView">
+    <div class="study-wrap">
+      <div class="study-prog-bar"><div class="study-prog-fill" id="studyProg"></div></div>
+      <div class="study-meta">
+        <span class="study-counter" id="studyCtr">1 / 1</span>
+        <span class="study-cat" id="studyCat"></span>
+      </div>
+      <div class="study-card" id="studyCard" onclick="flipStudy()">
+        <div class="study-q" id="studyQ"></div>
+        <div class="study-divider" id="studyDiv" style="display:none"></div>
+        <div class="study-a" id="studyA"></div>
+        <div class="study-hint" id="studyHint">Click to reveal answer</div>
+      </div>
+      <div class="study-actions" id="studyActions">
+        <div class="study-btns">
+          <button class="study-btn got" onclick="markCard('')">✓ Got it<span class="kbd">[1]</span></button>
+          <button class="study-btn al" onclick="markCard('maybe')">~ Almost<span class="kbd">[2]</span></button>
+          <button class="study-btn rv" onclick="markCard('review')">⚑ Review<span class="kbd">[3]</span></button>
+        </div>
+        <div class="nav-btns">
+          <button class="nav-btn" onclick="studyNav(-1)">← Prev<span class="kbd">[J]</span></button>
+          <button class="nav-btn" onclick="studyNav(1)">Next →<span class="kbd">[L]</span></button>
+        </div>
+      </div>
+      <p style="text-align:center;font-size:12px;color:var(--text3);margin-top:12px">Space to flip · ← → or J/L to navigate · 1/2/3 to mark</p>
+    </div>
+  </div>
+</div>
+<script>
+const CARDS = [
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "What is the social contract, and who were the three main thinkers?", "a": "<ul><li><strong>Social contract</strong>: individuals surrender some freedoms in exchange for government protection</li><li><strong>Locke</strong>: life, liberty, <strong>property</strong> — greatest influence on founders</li><li><strong>Hobbes</strong>: humans are selfish → submit to sovereign state for peace</li><li><strong>Rousseau</strong>: people are naturally free and equal; state protects their rights</li></ul>"},
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "How does Locke's theory differ from what Jefferson wrote in the Declaration?", "a": "<ul><li>Locke: <strong>life, liberty, property</strong></li><li>Jefferson adapted to <strong>life, liberty, pursuit of happiness</strong></li><li>Both rooted in natural rights / social contract theory</li></ul>"},
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "What is popular sovereignty?", "a": "<ul><li>Ultimate political authority rests with <strong>the people</strong></li><li>Government is legitimate only with <strong>consent of the governed</strong></li><li>Expressed through elections, referendums, amendments</li><li>Preamble: <strong>\"We the People\"</strong></li></ul>"},
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "What are natural rights, and what makes them inalienable?", "a": "<ul><li>Rights inherent to all humans regardless of government</li><li><strong>Inalienable</strong>: cannot be surrendered or taken away</li><li><strong>Universal</strong>: apply to everyone equally</li><li>Protected by the 9th Amendment even if not listed</li></ul>"},
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "What is the difference between individual liberty and public welfare?", "a": "<ul><li><strong>Individual liberty</strong>: freedom to act without undue government interference</li><li>Liberty is NOT absolute — can be limited for public safety</li><li><strong>Bill of Rights</strong> is the primary protection of individual liberty</li><li>Balancing act: personal freedom vs. common good</li></ul>"},
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "What constitutional protections prevent majority tyranny over minorities?", "a": "<ul><li><strong>Bill of Rights</strong>: freedoms the majority cannot take away</li><li><strong>Equal Protection Clause</strong> (14th Amendment)</li><li><strong>Judicial review</strong>: courts can strike down majority laws that harm minorities</li><li><strong>Separation of powers</strong>: no single majority controls everything</li><li>Senate: equal representation for small states</li></ul>"},
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "What is constitutionalism?", "a": "<ul><li>Government authority must be <strong>limited by the Constitution</strong></li><li>No official or branch is above the law</li><li>Enforced through <strong>judicial review</strong> (Marbury v. Madison)</li><li><strong>Supremacy Clause</strong>: Constitution is the supreme law of the land</li></ul>"},
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "What are the three types of powers in federalism?", "a": "<ul><li><strong>Enumerated</strong>: given to federal govt (Article I, Sec. 8) — war, commerce, currency</li><li><strong>Reserved</strong>: kept by states (10th Amendment) — education, local police</li><li><strong>Concurrent</strong>: shared — taxes, roads, courts</li><li>Supremacy Clause: federal law wins in conflicts</li></ul>"},
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "What is republicanism, and how does it differ from pure democracy?", "a": "<ul><li><strong>Republic</strong>: citizens elect representatives who exercise power</li><li><strong>Pure democracy</strong>: majority can do anything — risks \"tyranny of the majority\"</li><li>Republic adds: Bill of Rights, separation of powers, checks and balances</li><li>U.S. is BOTH a democracy and a republic</li></ul>"},
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "Give three examples of checks and balances.", "a": "<ul><li>President <strong>vetoes</strong> legislation → Congress overrides with 2/3 vote</li><li>Senate <strong>confirms</strong> presidential appointments (judges, cabinet)</li><li>Judiciary <strong>declares laws unconstitutional</strong> (judicial review)</li><li>Congress can <strong>impeach</strong> the President or judges</li></ul>"},
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "What are the roles of the three branches under separation of powers?", "a": "<ul><li><strong>Legislative</strong> (Congress, Article I): makes laws</li><li><strong>Executive</strong> (President, Article II): enforces laws</li><li><strong>Judicial</strong> (Courts, Article III): interprets laws</li><li>Each independent in core functions but checked by others</li></ul>"},
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "How does the Electoral College work? What happens if no one reaches 270?", "a": "<ul><li>Each state: EC votes = Senators (2) + Representatives (varies by population)</li><li>D.C. gets 3 votes (23rd Amendment); total = <strong>538</strong>; need <strong>270 to win</strong></li><li>48 states: winner-take-all; Maine/Nebraska: proportional</li><li>No 270 majority → <strong>House of Representatives chooses the President</strong></li></ul>"},
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "What is the rule of law, and what case best illustrates it applies to the President?", "a": "<ul><li>No one is above the law — including the President and government officials</li><li>All are equally subject to and accountable under the law</li><li><strong>United States v. Nixon (1974)</strong>: President must comply with judicial subpoenas</li><li>Magna Carta (1215) is the earliest precedent</li></ul>"},
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "What are the three levels of scrutiny under Equal Protection?", "a": "<ul><li><strong>Strict Scrutiny</strong>: race, national origin → compelling interest + narrowly tailored (hardest to justify)</li><li><strong>Intermediate Scrutiny</strong>: gender/sex</li><li><strong>Rational Basis</strong>: all other classifications → just needs a rational government interest</li></ul>"},
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "What is the difference between civil liberties and civil rights?", "a": "<ul><li><strong>Civil Liberties</strong>: protections FROM government (what it CANNOT do to you) — Bill of Rights</li><li><strong>Civil Rights</strong>: protections ensuring EQUAL treatment (what government MUST do FOR you)</li><li>Example: 1st Amendment = civil liberty; 14th Equal Protection = civil right</li></ul>"},
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "What are the two due process types, and where do they appear in the Constitution?", "a": "<ul><li><strong>Procedural</strong>: government must use fair processes before depriving rights</li><li><strong>Substantive</strong>: certain fundamental rights can't be taken regardless of procedure</li><li><strong>5th Amendment</strong>: applies to FEDERAL government</li><li><strong>14th Amendment</strong>: applies to STATE governments</li></ul>"},
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "What does the 9th Amendment protect?", "a": "<ul><li>Rights not specifically listed in the Constitution are <strong>still retained by the people</strong></li><li>Prevents the government from claiming only listed rights are protected</li><li>Recognizes citizens have natural rights beyond those enumerated</li></ul>"},
+  {"cat": "foundations", "catLabel": "Civic Foundations", "q": "What four amendments expanded voting rights?", "a": "<ul><li><strong>15th (1870)</strong>: cannot deny vote based on race</li><li><strong>19th (1920)</strong>: women's right to vote</li><li><strong>24th (1964)</strong>: abolished poll taxes</li><li><strong>26th (1971)</strong>: voting age lowered to 18</li></ul>"},
+  {"cat": "constitution", "catLabel": "The Constitution", "q": "What are the key differences between the House and Senate?", "a": "<ul><li><strong>House</strong>: 2-year terms, 25+, by population, SOLE power to IMPEACH</li><li><strong>Senate</strong>: 6-year terms, 30+, 2 per state, TRIES impeachment (2/3 to convict)</li><li>Revenue bills originate in the HOUSE</li><li>Senate confirms appointments; approves treaties (2/3)</li></ul>"},
+  {"cat": "constitution", "catLabel": "The Constitution", "q": "What are the presidential requirements and key powers (Article II)?", "a": "<ul><li>Requirements: <strong>natural-born citizen, 35+, 14-year U.S. resident</strong></li><li>Commander-in-Chief; pardons (NOT for impeachment); veto</li><li>Nominate judges (Senate confirms); make treaties (2/3 Senate)</li><li>22nd Amendment: max <strong>2 terms</strong></li></ul>"},
+  {"cat": "constitution", "catLabel": "The Constitution", "q": "What does Article III establish, and what did Marbury v. Madison add?", "a": "<ul><li>Establishes federal judiciary; Supreme Court; judges serve <strong>life terms</strong></li><li>Original jurisdiction: cases involving states or foreign officials</li><li><strong>Judicial review NOT in Article III</strong> — established by Marbury v. Madison (1803)</li><li>Federal courts: Supreme Court → 13 Circuit Courts → 94 District Courts</li></ul>"},
+  {"cat": "constitution", "catLabel": "The Constitution", "q": "What is the Full Faith and Credit Clause (Article IV)?", "a": "<ul><li>Each state must recognize the legal acts, records, and proceedings of other states</li><li>Applies to: marriages, divorces, court judgments, professional licenses</li><li><strong>Obergefell v. Hodges (2015)</strong>: same-sex marriages must be recognized nationwide</li><li>Creates a unified legal space across all 50 states</li></ul>"},
+  {"cat": "constitution", "catLabel": "The Constitution", "q": "How can the Constitution be amended (Article V)?", "a": "<ul><li><strong>Method 1 (only method ever used)</strong>: Congress proposes with 2/3 both chambers → 3/4 of states (38) ratify</li><li><strong>Method 2 (never used)</strong>: 2/3 of states call Constitutional Convention → 3/4 ratify</li><li>Senate equal representation <strong>cannot be amended away</strong></li><li>27 amendments total; first 10 = Bill of Rights (1791)</li></ul>"},
+  {"cat": "constitution", "catLabel": "The Constitution", "q": "What is the Supremacy Clause (Article VI)?", "a": "<ul><li>Constitution, federal laws, and treaties are the <strong>supreme law of the land</strong></li><li>Federal law prevails over state law in conflicts (preemption)</li><li>BUT federal law must be based on a legitimate enumerated power</li><li>Also: no religious test for any federal office</li></ul>"},
+  {"cat": "constitution", "catLabel": "The Constitution", "q": "What does the Necessary and Proper (Elastic) Clause do?", "a": "<ul><li>Grants Congress power to make laws \"necessary and proper\" to execute enumerated powers</li><li>Creates <strong>implied powers</strong> — not listed but logically connected to enumerated powers</li><li><strong>McCulloch v. Maryland (1819)</strong>: Congress can create a National Bank via this clause</li><li>Example implied power: the IRS (needed to carry out the taxing power)</li></ul>"},
+  {"cat": "constitution", "catLabel": "The Constitution", "q": "What is the Commerce Clause, and what are its limits?", "a": "<ul><li>Congress can regulate commerce with foreign nations, <strong>among the states</strong>, and with Native tribes</li><li>Anything crossing a state line is within federal jurisdiction</li><li><strong>Lopez (1995)</strong>: first limit in 60 years — guns in schools not \"commerce\"</li><li>Used to justify civil rights laws, environmental regulations, minimum wage</li></ul>"},
+  {"cat": "constitution", "catLabel": "The Constitution", "q": "What is selective incorporation, and what case established it?", "a": "<ul><li>Process of applying Bill of Rights protections to state governments</li><li>Before: BOR only applied to federal govt (Barron v. Baltimore, 1833)</li><li>Mechanism: 14th Amendment Due Process Clause</li><li><strong>Palko v. Connecticut (1937)</strong>: established selective doctrine — one right at a time</li><li>Most rights now incorporated; 3rd Amendment and 7th Amendment are not</li></ul>"},
+  {"cat": "constitution", "catLabel": "The Constitution", "q": "Federalists vs. Anti-Federalists — key differences?", "a": "<ul><li><strong>Federalists</strong> (Hamilton, Madison, Jay): FOR Constitution; stronger federal govt; wrote Federalist Papers</li><li><strong>Anti-Federalists</strong> (Patrick Henry): AGAINST; demanded Bill of Rights; wrote Brutus No. 1</li><li>The PROMISE of a Bill of Rights secured Anti-Federalist support</li><li>Madison drafted the Bill of Rights (1791) to fulfill the promise</li></ul>"},
+  {"cat": "constitution", "catLabel": "The Constitution", "q": "What are the three most important Federalist Papers?", "a": "<ul><li><strong>No. 10 (Madison)</strong>: large republic controls factions better than pure democracy</li><li><strong>No. 51 (Madison)</strong>: \"Ambition must counteract ambition\" — checks and balances</li><li><strong>No. 78 (Hamilton)</strong>: defends judiciary; logic of judicial review</li><li>Cited in 2,000+ federal court cases as evidence of framers' intent</li></ul>"},
+  {"cat": "constitution", "catLabel": "The Constitution", "q": "What do the Reconstruction Amendments (13th, 14th, 15th) do?", "a": "<ul><li><strong>13th (1865)</strong>: abolished slavery</li><li><strong>14th (1868)</strong>: citizenship, Due Process Clause, Equal Protection Clause</li><li><strong>15th (1870)</strong>: right to vote cannot be denied based on race</li><li>Passed after the Civil War; overturned Dred Scott</li></ul>"},
+  {"cat": "constitution", "catLabel": "The Constitution", "q": "What are the six clauses of the First Amendment?", "a": "<ul><li><strong>Establishment</strong>: no official religion; no school-sponsored prayer (Engel v. Vitale)</li><li><strong>Free Exercise</strong>: cannot prohibit religious practice (Wisconsin v. Yoder)</li><li><strong>Free Speech</strong>: broad; political speech = highest protection; flag burning protected (Texas v. Johnson)</li><li><strong>Free Press</strong>: no prior restraint (NY Times v. U.S.)</li><li><strong>Assembly</strong>: right to gather peacefully</li><li><strong>Petition</strong>: right to petition government</li></ul>"},
+  {"cat": "constitution", "catLabel": "The Constitution", "q": "What is substantive due process, and what rights does it protect?", "a": "<ul><li>Government cannot take away certain fundamental rights regardless of procedure</li><li>Derived from 14th Amendment Due Process Clause</li><li>Protected: privacy, marriage, family, reproductive decisions</li><li><strong>Griswold v. Connecticut (1965)</strong>: right to marital privacy</li><li><strong>Roe v. Wade (1973)</strong>: right to abortion — overturned by Dobbs (2022)</li></ul>"},
+  {"cat": "documents", "catLabel": "Founding Documents", "q": "What are the three key ideas in the Declaration of Independence?", "a": "<ul><li><strong>Natural rights</strong>: life, liberty, pursuit of happiness (unalienable)</li><li><strong>Consent of the governed</strong>: government derives power from the people</li><li><strong>Right to alter/abolish</strong>: people can change or overthrow unjust government</li><li>Written by <strong>Thomas Jefferson</strong>; signed July 4, 1776; NOT legally binding</li></ul>"},
+  {"cat": "documents", "catLabel": "Founding Documents", "q": "What were the fatal weaknesses of the Articles of Confederation?", "a": "<ul><li>Congress could NOT <strong>raise taxes</strong></li><li>Each state had only <strong>one vote</strong> regardless of population</li><li>NO executive branch; NO national judiciary</li><li>Changes required <strong>unanimous consent</strong> of all states</li><li>Led to Shays' Rebellion (1786) → Constitutional Convention (1787)</li></ul>"},
+  {"cat": "documents", "catLabel": "Founding Documents", "q": "What did the Northwest Ordinances (1784-1787) establish?", "a": "<ul><li>Organized the Northwest Territory (modern Midwest)</li><li>Path to statehood: 5,000 adults = non-voting rep; 60,000 = apply for statehood</li><li><strong>Prohibited slavery</strong> in the Northwest Territory</li><li>Model for future territorial organization (Louisiana, Alaska)</li></ul>"},
+  {"cat": "documents", "catLabel": "Founding Documents", "q": "Who wrote the Federalist Papers, and what were the three key essays?", "a": "<ul><li><strong>Hamilton, Madison, Jay</strong> (pseudonym: Publius)</li><li><strong>No. 10</strong>: factions and large republic</li><li><strong>No. 51</strong>: checks and balances</li><li><strong>No. 78</strong>: judicial review</li><li>Argued FOR ratification; cited in 2,000+ court cases</li></ul>"},
+  {"cat": "documents", "catLabel": "Founding Documents", "q": "How did the Magna Carta (1215) influence the U.S. Constitution?", "a": "<ul><li><strong>First limitation on royal power by law</strong></li><li>Key ideas: trial by jury, protection from arbitrary arrest, rule of law, property rights</li><li>Signed by King <strong>John of England</strong> at Runnymede</li><li>5th and 14th Amendment due process clauses echo Magna Carta language</li></ul>"},
+  {"cat": "documents", "catLabel": "Founding Documents", "q": "What did the Mayflower Compact (1620) establish?", "a": "<ul><li><strong>First governing document</strong> of Plymouth Colony</li><li>Created self-governing community based on <strong>consent of the signers</strong></li><li>Signed 1620 — 156 years before the Declaration of Independence</li><li>One of the first examples of social contract in America</li></ul>"},
+  {"cat": "documents", "catLabel": "Founding Documents", "q": "How did the English Bill of Rights (1689) influence American government?", "a": "<ul><li>Created after the <strong>Glorious Revolution</strong>; signed by William and Mary</li><li>Established parliamentary supremacy; limited royal power</li><li><strong>Direct model</strong> for the U.S. Bill of Rights</li><li>Same rights in both: freedom from cruel/unusual punishment, right to bear arms, jury trial</li></ul>"},
+  {"cat": "documents", "catLabel": "Founding Documents", "q": "What was Thomas Paine's \"Common Sense\" and why did it matter?", "a": "<ul><li>Published January 1776 by <strong>Thomas Paine</strong></li><li>Argued for independence from Britain; attacked monarchy itself</li><li>Based on natural rights and reason (Enlightenment)</li><li>500,000 copies sold; turned public opinion toward independence</li><li>Directly paved way for the Declaration of Independence (6 months later)</li></ul>"},
+  {"cat": "documents", "catLabel": "Founding Documents", "q": "Who wrote the Virginia Declaration of Rights, and why does it matter?", "a": "<ul><li>Written by <strong>George Mason</strong>; adopted June 12, 1776</li><li><strong>Directly influenced</strong> the Declaration of Independence and U.S. Bill of Rights</li><li>Mason REFUSED to sign the Constitution because it lacked a Bill of Rights</li><li>His insistence ultimately led to the Bill of Rights being added</li></ul>"},
+  {"cat": "documents", "catLabel": "Founding Documents", "q": "Who wrote the Anti-Federalist Papers and what was their main argument?", "a": "<ul><li>Written anonymously; Brutus No. 1 attributed to <strong>Robert Yates</strong></li><li>Opposed ratification: federal government would be too powerful</li><li>Feared the Elastic Clause and Supremacy Clause</li><li>Their demands led to the <strong>Bill of Rights</strong> being added</li><li>10th Amendment was a direct response to their concerns about federal overreach</li></ul>"},
+  {"cat": "documents", "catLabel": "Founding Documents", "q": "What were the three Great Compromises at the Constitutional Convention?", "a": "<ul><li><strong>Great Compromise</strong>: House by population (large states) + Senate equal (small states)</li><li><strong>3/5 Compromise</strong>: enslaved people counted as 3/5 for representation</li><li><strong>Commerce/Slave Trade Compromise</strong>: slave trade protected until 1808</li><li>Convention held in Philadelphia; replaced Articles of Confederation</li></ul>"},
+  {"cat": "documents", "catLabel": "Founding Documents", "q": "What is the Massachusetts Constitution (1780) and why is it significant?", "a": "<ul><li><strong>First written state constitution</strong> in the U.S.</li><li>Written primarily by <strong>John Adams</strong></li><li>Included separation of powers, checks and balances, Declaration of Rights</li><li>Model for the U.S. Constitution and Bill of Rights</li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What did the Missouri Compromise (1820) do, and how was it undone?", "a": "<ul><li>Missouri admitted as slave state; Maine as free state</li><li>Banned slavery <strong>north of 36°30' latitude</strong> in Louisiana Purchase territory</li><li>Repealed by <strong>Kansas-Nebraska Act (1854)</strong></li><li>Declared unconstitutional by <strong>Dred Scott (1857)</strong></li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What were the main provisions of the Compromise of 1850?", "a": "<ul><li>California admitted as <strong>free state</strong></li><li>New Mexico and Utah: popular sovereignty on slavery</li><li><strong>Stricter Fugitive Slave Act</strong> — required Northern compliance</li><li>Slave trade (not slavery) banned in Washington D.C.</li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "Why did the Fugitive Slave Act (1850) enrage Northerners?", "a": "<ul><li>Required <strong>ALL citizens</strong> to assist in capturing escaped slaves</li><li>Severe penalties for helping escaped slaves</li><li>Denied accused people the right to testify or have a jury trial</li><li>Forced Northerners to be complicit in slavery → energized abolitionism</li><li>Inspired <em>Uncle Tom's Cabin</em>; strengthened Underground Railroad</li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What did the Kansas-Nebraska Act (1854) do?", "a": "<ul><li><strong>Repealed the Missouri Compromise</strong></li><li>Applied popular sovereignty to slavery in Kansas and Nebraska</li><li>Led to \"Bleeding Kansas\" — violent conflict between pro- and anti-slavery settlers</li><li>Created the <strong>Republican Party (1854)</strong></li><li>One of the direct causes of the Civil War</li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What did the Civil Rights Act (1964) do?", "a": "<ul><li>Outlawed discrimination based on <strong>race, color, religion, sex, or national origin</strong></li><li>Banned discrimination in employment and public accommodations</li><li>Created the <strong>Equal Employment Opportunity Commission (EEOC)</strong></li><li>Justified under Commerce Clause and 14th Amendment</li><li>Signed by <strong>President Lyndon B. Johnson</strong></li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What did the Voting Rights Act (1965) do, and what weakened it?", "a": "<ul><li>Prohibited racial discrimination in voting</li><li>Banned discriminatory practices: literacy tests, poll taxes</li><li>Required federal <strong>pre-clearance</strong> for voting changes in discriminatory states</li><li>Passed after <strong>Bloody Sunday</strong> in Selma, Alabama</li><li><strong>Shelby County v. Holder (2013)</strong>: struck down the pre-clearance formula</li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What is the War Powers Resolution (1973)?", "a": "<ul><li>President must notify Congress within <strong>48 hours</strong> of deploying forces</li><li>Military engagement limited to <strong>60 days</strong> without Congressional authorization</li><li>Passed over <strong>Nixon's veto</strong>; response to Vietnam War</li><li>Most presidents argue it's unconstitutional or comply minimally</li><li>Never definitively ruled on by the Supreme Court</li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What did the Social Security Act (1935) establish?", "a": "<ul><li>Created under FDR as part of the <strong>New Deal</strong>; passed during the Great Depression</li><li>Retirement insurance for workers</li><li>Unemployment insurance</li><li>Public assistance for disabled individuals</li><li>Established federal role in providing economic security for citizens</li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What is the difference between Medicare and Medicaid?", "a": "<ul><li><strong>Medicare</strong>: federal health insurance for people <strong>65+</strong> or with certain disabilities</li><li><strong>Medicaid</strong>: joint federal-state program for <strong>low-income Americans</strong></li><li>Both created in <strong>1965</strong> as part of LBJ's Great Society</li><li>Together cover 130+ million Americans today</li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What were the key provisions of the Alien and Sedition Acts (1798)?", "a": "<ul><li>Increased citizenship residency from 5 to <strong>14 years</strong></li><li>President could deport non-citizens deemed threats</li><li>Sedition Act: criminalized criticism of the government</li><li>Passed under President <strong>John Adams</strong>; aimed at silencing opposition</li><li>Constitutionality NEVER tested in Supreme Court; expired 1801</li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What did the Treaty of Paris (1783) accomplish?", "a": "<ul><li>Ended the American War of Independence</li><li><strong>Britain formally recognized U.S. independence</strong></li><li>Established U.S. territory from Atlantic to <strong>Mississippi River</strong></li><li>Negotiated by John Adams, Benjamin Franklin, and John Jay</li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What was the Louisiana Purchase (1803)?", "a": "<ul><li>U.S. purchased ~530 million acres from <strong>France</strong> for <strong>$15 million</strong> (~3 cents/acre)</li><li>Roughly <strong>doubled the size</strong> of the United States</li><li>Napoleon offered the full territory (not just New Orleans) — needed money after Haiti</li><li>Jefferson had constitutional concerns but proceeded</li><li>Led to Lewis and Clark Expedition; opened westward expansion</li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What did the Treaty of Guadalupe Hidalgo (1848) provide?", "a": "<ul><li>Ended the Mexican-American War</li><li>Mexico ceded <strong>55% of its territory</strong> (California, Southwest)</li><li>U.S. paid Mexico <strong>$15 million</strong></li><li>Rio Grande established as southern border of Texas</li><li>Acquisition of California → Gold Rush of 1849 → intensified slavery debate</li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What was the Alaska Purchase (1867)?", "a": "<ul><li>U.S. purchased Alaska from <strong>Russia</strong> for <strong>$7.2 million</strong> (~2 cents/acre)</li><li>Negotiated by Secretary of State <strong>William Seward</strong></li><li>Mocked as \"Seward's Folly\" or \"Seward's Icebox\"</li><li>Proved enormously valuable: gold, oil, strategic military importance</li><li>Alaska became the 49th state in <strong>1959</strong></li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What did the Treaty of Versailles (1919) do, and why is it ironic for the U.S.?", "a": "<ul><li>Ended World War I; required Germany to admit guilt and pay reparations</li><li>Proposed the <strong>League of Nations</strong> — Wilson's key contribution</li><li>U.S. Senate <strong>NEVER ratified</strong> it — Henry Cabot Lodge opposed the League of Nations</li><li>Harsh terms → German resentment → Nazis → World War II</li><li>Compare: U.S. quickly ratified the UN Charter (1945)</li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What did the Treaty of Paris (1898) establish?", "a": "<ul><li>Ended the Spanish-American War</li><li>Spain ceded <strong>Puerto Rico and Guam</strong> to the U.S.</li><li>U.S. purchased the <strong>Philippines</strong> for $20 million</li><li>Cuba gained independence from Spain</li><li>Transformed U.S. into an imperial power with overseas territories</li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What is NATO and what is Article 5?", "a": "<ul><li><strong>North Atlantic Treaty Organization</strong>: collective defense alliance</li><li>Created in <strong>1949</strong> in response to Soviet/Cold War threat</li><li><strong>Article 5</strong>: an attack on one member = attack on all</li><li>U.S. is a founding member; currently 32 member nations</li><li>Article 5 was invoked for the first time after the 9/11 attacks</li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What did the Gulf of Tonkin Resolution (1964) do?", "a": "<ul><li>Authorized President to use military force in <strong>Southeast Asia</strong> without declaration of war</li><li>Based on disputed Gulf of Tonkin incident (second attack likely never occurred)</li><li>Used by LBJ to dramatically escalate U.S. involvement in Vietnam</li><li>Directly prompted the <strong>War Powers Resolution (1973)</strong></li><li>Set precedent for authorizations for use of military force (AUMFs)</li></ul>"},
+  {"cat": "legislation", "catLabel": "Laws & Treaties", "q": "What did the USA PATRIOT Act (2001) do?", "a": "<ul><li>Passed 45 days after 9/11</li><li>Expanded government surveillance powers</li><li>Allowed roving wiretaps, sneak-and-peek searches, monitoring of records</li><li>Controversial for potential <strong>4th Amendment violations</strong></li><li>Reflects tension between national security and civil liberties</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Marbury v. Madison (1803) — What did it establish and who wrote it?", "a": "<ul><li>Established <strong>judicial review</strong>: Supreme Court can declare laws/actions unconstitutional</li><li>Chief Justice <strong>John Marshall</strong></li><li>Judicial review is <strong>NOT explicitly in the Constitution</strong> — Marshall created the doctrine</li><li>Most important Supreme Court decision in U.S. history</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "McCulloch v. Maryland (1819) — two key rulings?", "a": "<ul><li>1. Congress <strong>CAN create a National Bank</strong> via Necessary and Proper (implied powers)</li><li>2. States <strong>CANNOT tax</strong> the federal government: \"the power to tax involves the power to destroy\"</li><li>Chief Justice <strong>John Marshall</strong></li><li>Established broad scope of Congressional implied powers</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Gibbons v. Ogden (1824) — what principle did it establish?", "a": "<ul><li>Federal government has broad power to regulate <strong>interstate commerce</strong></li><li>Federal license (Gibbons) prevailed over state monopoly (Ogden)</li><li>Anything crossing a state line = within federal Commerce Clause jurisdiction</li><li>Chief Justice <strong>John Marshall</strong></li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Dred Scott v. Sandford (1857) — why is it one of the worst decisions?", "a": "<ul><li>Black people NOT citizens; cannot sue in federal court</li><li>Enslaved people are <strong>property</strong> (5th Amendment) — Congress cannot free them</li><li>Missouri Compromise declared unconstitutional</li><li>Directly helped cause the Civil War</li><li>Overturned by <strong>13th, 14th, and 15th Amendments</strong></li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Plessy v. Ferguson (1896) — doctrine established and lone dissenter?", "a": "<ul><li>\"<strong>Separate but equal</strong>\" doctrine — legalized segregation for 58 years</li><li>Only dissenter: Justice <strong>John Marshall Harlan</strong>: \"Our Constitution is color-blind\"</li><li>Overturned by <strong>Brown v. Board of Education (1954)</strong></li><li>One of the worst decisions in Supreme Court history</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Schenck v. United States (1919) — what test did it establish?", "a": "<ul><li>\"<strong>Clear and present danger</strong>\" test for limiting free speech</li><li>WWI context: Espionage Act; anti-draft leaflets</li><li>Justice <strong>Oliver Wendell Holmes</strong></li><li>Famous: falsely shouting \"fire\" in a crowded theater</li><li>Later replaced by \"imminent lawless action\" test (Brandenburg v. Ohio, 1969)</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Korematsu v. United States (1944) — what doctrine did it introduce?", "a": "<ul><li>Upheld Japanese-American internment (widely considered wrong today)</li><li>First use of <strong>strict scrutiny</strong> doctrine for racial discrimination</li><li>Formally repudiated by the Supreme Court in <strong>Trump v. Hawaii (2018)</strong></li><li>Congress apologized and paid reparations to Japanese-Americans (1988)</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Brown v. Board of Education (1954) — ruling and significance?", "a": "<ul><li>Segregated public schools are <strong>inherently unequal</strong> — violates Equal Protection Clause</li><li>Overturned <strong>Plessy v. Ferguson</strong> and \"separate but equal\"</li><li>Chief Justice <strong>Earl Warren</strong>; unanimous <strong>9-0</strong> decision</li><li>Energized the Civil Rights Movement → Civil Rights Act (1964)</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Mapp v. Ohio (1961) — what rule did it create?", "a": "<ul><li>Illegally obtained evidence <strong>cannot be used</strong> in state court (exclusionary rule)</li><li>Incorporated the <strong>4th Amendment</strong> to the states</li><li>Illegal search → evidence excluded</li><li>Key selective incorporation case</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Engel v. Vitale (1962) — ruling on school prayer?", "a": "<ul><li>School-sponsored prayer violates the <strong>Establishment Clause</strong></li><li>Even nondenominational, voluntary prayer = government endorsement of religion</li><li><strong>Student-initiated</strong> religious expression is still protected</li><li>Expanded: Abington v. Schempp (1963) banned school Bible readings</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Gideon v. Wainwright (1963) — what right did it secure?", "a": "<ul><li>States must provide attorneys to criminal defendants who <strong>cannot afford one</strong></li><li>Incorporated the <strong>6th Amendment</strong> right to counsel to states</li><li>Created the public defender system nationwide</li><li>Unanimous decision</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Miranda v. Arizona (1966) — what are the four Miranda Rights?", "a": "<ul><li>1. Right to <strong>remain silent</strong></li><li>2. Anything you say can be used against you in court</li><li>3. Right to an <strong>attorney</strong></li><li>4. If you cannot afford an attorney, one will be <strong>appointed</strong></li><li>Based on 5th (self-incrimination) and 6th (counsel) Amendments</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Tinker v. Des Moines (1969) — the Tinker Test?", "a": "<ul><li>\"Students do not shed their constitutional rights at the schoolhouse gate\"</li><li>School can restrict speech ONLY if it causes <strong>substantial disruption</strong></li><li>Armbands = \"pure speech\" → protected</li><li>Contrast: Hazelwood (1988) — school-SPONSORED speech has lower protection</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "New York Times v. United States (1971) — what is prior restraint?", "a": "<ul><li>\"Pentagon Papers Case\" — Nixon tried to prevent publication of classified Vietnam study</li><li>Government CANNOT use <strong>prior restraint</strong> without overwhelming justification</li><li>Embarrassing the government is NOT sufficient reason to censor the press</li><li>Very high bar: \"direct, immediate, and irreparable damage\" required</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "United States v. Nixon (1974) — what does it say about executive privilege?", "a": "<ul><li>Executive privilege is real but <strong>NOT absolute</strong></li><li>President must comply with proper judicial subpoenas in criminal cases</li><li>Led to Nixon turning over the Watergate tapes → <strong>his resignation</strong> (only presidential resignation in U.S. history)</li><li>Established rule of law applies to the President</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Regents of UC v. Bakke (1978) — what did it decide about affirmative action?", "a": "<ul><li>Racial <strong>quotas</strong> in university admissions = unconstitutional</li><li>Race CAN be one factor among many in holistic admissions</li><li>Bakke was ordered admitted to UC Davis Medical School</li><li>Framework for affirmative action for 25+ years (now changed by SFFA v. Harvard, 2023)</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Texas v. Johnson (1989) — is flag burning protected?", "a": "<ul><li><strong>Yes — flag burning is protected symbolic speech</strong></li><li>First Amendment protects political expression even if deeply offensive</li><li>\"Government may not prohibit an idea simply because society finds it disagreeable\"</li><li>5-4 decision; Congress responded but SCOTUS struck down that law too</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "United States v. Lopez (1995) — why is it significant?", "a": "<ul><li><strong>First limit on Commerce Clause in 60 years</strong></li><li>Guns in school zones NOT \"commerce\" — doesn't substantially affect interstate commerce</li><li>Congress cannot regulate all local, non-economic activity</li><li>Restored some limits on federal power after decades of expansion</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Bush v. Gore (2000) — what happened?", "a": "<ul><li>Halted the Florida recount; decided the 2000 presidential election</li><li>Bush won Florida by <strong>537 votes</strong> → 271 EC votes; won presidency despite losing popular vote</li><li>Equal Protection Clause: inconsistent recount standards unconstitutional</li><li>One of the most controversial decisions in modern Court history</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "DC v. Heller (2008) and McDonald v. Chicago (2010) — what do they establish?", "a": "<ul><li><strong>Heller (2008)</strong>: Second Amendment protects individual right to bear arms for self-defense (D.C.)</li><li><strong>McDonald (2010)</strong>: incorporated the Second Amendment to the states via 14th Amendment</li><li>Heller + McDonald = individual right to bear arms applies at ALL levels of government</li><li>Both are 5-4 decisions</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Citizens United v. FEC (2010) — what did it create?", "a": "<ul><li>Independent corporate expenditures = protected <strong>free speech</strong></li><li>Unlimited independent spending on campaigns cannot be regulated</li><li>Led to the creation of <strong>Super PACs</strong></li><li>5-4 decision; one of the most consequential campaign finance decisions ever</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Heart of Atlanta Motel v. United States (1964) — significance?", "a": "<ul><li>Upheld the Civil Rights Act (1964) under the <strong>Commerce Clause</strong></li><li>Hotels/motels served interstate travelers → affected commerce → Congress could regulate</li><li>Ended discriminatory practices in public accommodations</li><li>Key case linking civil rights to Commerce Clause authority</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Loving v. Virginia (1967) — what did it strike down?", "a": "<ul><li>Struck down laws banning <strong>interracial marriage</strong></li><li>Virginia's Racial Integrity Act violated Equal Protection and Due Process (14th Amendment)</li><li>Marriage is a fundamental right under substantive due process</li><li>Cited in Obergefell v. Hodges (2015) for same-sex marriage</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Obergefell v. Hodges (2015) — ruling?", "a": "<ul><li><strong>Same-sex marriage</strong> is a constitutionally protected right</li><li>Based on Equal Protection and Due Process clauses (14th Amendment)</li><li>States must recognize same-sex marriages from other states (Full Faith and Credit)</li><li>5-4 decision; extended Loving v. Virginia principles</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Griswold v. Connecticut (1965) — what right did it establish?", "a": "<ul><li>Right to <strong>marital privacy</strong> — struck down ban on contraception for married couples</li><li>Established the right to privacy as a constitutional right (not explicitly listed)</li><li>Justice Douglas: derived from \"penumbras\" of Bill of Rights + 9th Amendment</li><li>Foundation for later privacy cases: Roe v. Wade, Lawrence v. Texas</li></ul>"},
+  {"cat": "cases", "catLabel": "Court Cases", "q": "Baker v. Carr (1962) — what is justiciability?", "a": "<ul><li>Federal courts CAN hear redistricting challenges under Equal Protection Clause</li><li><strong>Justiciable</strong>: courts have the authority to hear and decide the case</li><li>Political question doctrine does NOT prevent review of redistricting</li><li>Led to \"one person, one vote\" principle (Reynolds v. Sims, 1964)</li></ul>"},];
+
+// ── STATE ──
+const status = {}; // '' | 'review' | 'maybe'
+let curCat = 'all', curStatus = '', isStudy = false, studyDeck = [], studyIdx = 0, studyFlipped = false;
+
+// ── CATEGORIES ──
+const CATS = [...new Set(CARDS.map(c => c.cat))];
+const CAT_LABELS = {};
+CARDS.forEach(c => { CAT_LABELS[c.cat] = c.catLabel; });
+
+// ── FILTERS ──
+function buildFilters() {
+  const row = document.getElementById('filterRow');
+  row.innerHTML = '';
+  const all = mk('button','filt on','All');
+  all.onclick = () => setFilter('all','');
+  row.appendChild(all);
+  CATS.forEach(cat => {
+    const btn = mk('button','filt',CAT_LABELS[cat]);
+    btn.dataset.cat = cat;
+    btn.onclick = () => setFilter(cat,'');
+    row.appendChild(btn);
+  });
+  const sp = mk('span','spacer','');
+  row.appendChild(sp);
+  const rv = mk('button','filt rv','⚑ Need Review');
+  rv.id = 'filtRv';
+  rv.onclick = () => setFilter(curCat,'review');
+  row.appendChild(rv);
+  const al = mk('button','filt al','~ Almost');
+  al.id = 'filtAl';
+  al.onclick = () => setFilter(curCat,'maybe');
+  row.appendChild(al);
+}
+
+function setFilter(cat, st) {
+  if (st && curStatus === st) { curStatus = ''; }
+  else if (st) { curStatus = st; cat = curCat; }
+  else { curCat = cat; curStatus = ''; }
+  document.querySelectorAll('.filt[data-cat],.filt:not([data-cat])').forEach(b => {
+    if (b.id === 'filtRv') b.classList.toggle('on', curStatus === 'review');
+    else if (b.id === 'filtAl') b.classList.toggle('on', curStatus === 'maybe');
+    else if (!b.dataset.cat) b.classList.toggle('on', curCat === 'all');
+    else b.classList.toggle('on', b.dataset.cat === curCat);
+  });
+  if (isStudy) { buildStudyDeck(); renderStudy(); }
+  else { renderGrid(); }
+  updateStats();
+}
+
+function getDeck() {
+  return CARDS.filter(c => {
+    if (curCat !== 'all' && c.cat !== curCat) return false;
+    if (curStatus && status[c.q] !== curStatus) return false;
+    return true;
+  });
+}
+
+// ── STATS ──
+function updateStats() {
+  const deck = getDeck();
+  document.getElementById('sTotal').textContent = CARDS.length;
+  document.getElementById('sShowing').textContent = deck.length;
+  document.getElementById('sReview').textContent = CARDS.filter(c => status[c.q] === 'review').length;
+  document.getElementById('sAlmost').textContent = CARDS.filter(c => status[c.q] === 'maybe').length;
+}
+
+// ── GRID VIEW ──
+function renderGrid() {
+  const grid = document.getElementById('gridView');
+  const deck = getDeck();
+  if (!deck.length) { grid.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><p>No cards match this filter.</p></div>'; return; }
+  grid.innerHTML = '';
+  deck.forEach((card, i) => {
+    const st = status[card.q] || '';
+    const icon = st === 'review' ? '⚑' : st === 'maybe' ? '~' : '';
+    const div = mk('div','fc','');
+    div.innerHTML = `<div class="fc-badge">${card.catLabel}</div>${icon?`<div class="fc-rv" style="color:${st==='review'?'var(--red)':'var(--amber)'}">${icon}</div>`:''}
+<div class="fc-q">${card.q}</div>
+<div class="fc-divider"></div>
+<div class="fc-a"><div class="fc-a-inner">${card.a}</div></div>`;
+    div.onclick = () => div.classList.toggle('flipped');
+    grid.appendChild(div);
+  });
+}
+
+// ── STUDY MODE ──
+function buildStudyDeck() { studyDeck = getDeck(); studyIdx = 0; studyFlipped = false; }
+
+function renderStudy() {
+  if (!studyDeck.length) {
+    document.getElementById('studyQ').textContent = 'No cards match this filter.';
+    document.getElementById('studyA').style.display = 'none';
+    document.getElementById('studyDiv').style.display = 'none';
+    document.getElementById('studyHint').style.display = 'none';
+    document.getElementById('studyActions').style.display = 'none';
+    return;
+  }
+  const card = studyDeck[studyIdx];
+  studyFlipped = false;
+  document.getElementById('studyQ').textContent = card.q;
+  document.getElementById('studyA').style.display = 'none';
+  document.getElementById('studyDiv').style.display = 'none';
+  document.getElementById('studyHint').style.display = 'block';
+  document.getElementById('studyActions').style.display = 'none';
+  document.getElementById('studyCtr').textContent = `${studyIdx + 1} / ${studyDeck.length}`;
+  document.getElementById('studyCat').textContent = card.catLabel;
+  document.getElementById('studyProg').style.width = Math.round((studyIdx / studyDeck.length) * 100) + '%';
+}
+
+function flipStudy() {
+  if (studyFlipped || !studyDeck.length) return;
+  studyFlipped = true;
+  const card = studyDeck[studyIdx];
+  const aEl = document.getElementById('studyA');
+  aEl.innerHTML = '<div class="study-a-inner">' + card.a + '</div>';
+  aEl.style.display = 'flex';
+  document.getElementById('studyDiv').style.display = 'block';
+  document.getElementById('studyHint').style.display = 'none';
+  document.getElementById('studyActions').style.display = 'flex';
+}
+
+function studyNav(dir) {
+  studyIdx = (studyIdx + dir + studyDeck.length) % studyDeck.length;
+  renderStudy();
+}
+
+function markCard(st) {
+  if (!studyDeck.length) return;
+  const card = studyDeck[studyIdx];
+  status[card.q] = st;
+  updateStats();
+  studyNav(1);
+}
+
+// ── TOGGLE MODE ──
+function toggleMode() {
+  isStudy = !isStudy;
+  document.getElementById('gridView').style.display = isStudy ? 'none' : 'grid';
+  document.getElementById('studyView').style.display = isStudy ? 'block' : 'none';
+  document.getElementById('modeBtn').textContent = isStudy ? '⊞ Grid View' : '📖 Study Mode';
+  if (isStudy) { buildStudyDeck(); renderStudy(); }
+  updateStats();
+}
+
+// ── KEYBOARD ──
+document.addEventListener('keydown', e => {
+  if (!isStudy) return;
+  if (e.code === 'Space') { e.preventDefault(); flipStudy(); }
+  else if (e.code === 'ArrowRight' || e.key === 'l' || e.key === 'L') studyNav(1);
+  else if (e.code === 'ArrowLeft' || e.key === 'j' || e.key === 'J') studyNav(-1);
+  else if (e.key === '1') markCard('');
+  else if (e.key === '2') markCard('maybe');
+  else if (e.key === '3') markCard('review');
+});
+
+// ── ANKI EXPORT ──
+function exportAnki() {
+  const deck = getDeck();
+  let txt = '#separator:tab\n#html:true\n#deck:FCLE Prep\n#notetype:Basic\n#tags column:3\n';
+  deck.forEach(c => {
+    const tag = 'FCLE::' + c.catLabel.replace(/ /g,'_');
+    txt += `${c.q}\t${c.a}\t${tag}\n`;
+  });
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(txt);
+  a.download = 'FCLE_Flashcards.txt';
+  a.click();
+}
+
+// ── THEME ──
+const thBtn = document.getElementById('themeBtn');
+function applyTheme(dark) {
+  document.documentElement[dark?'setAttribute':'removeAttribute']('data-theme','dark');
+  thBtn.textContent = dark ? '☀️ Light' : '🌙 Dark';
+  localStorage.setItem('fcleFlashTheme', dark ? 'dark' : 'light');
+}
+function toggleTheme() { applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark'); }
+(function(){ applyTheme(localStorage.getItem('fcleFlashTheme') === 'dark'); })();
+
+// ── HELPERS ──
+function mk(tag, cls, text) {
+  const el = document.createElement(tag);
+  el.className = cls;
+  if (text) el.textContent = text;
+  return el;
+}
+
+// ── INIT ──
+buildFilters();
+renderGrid();
+updateStats();
+</script>
+</body>
+</html>
