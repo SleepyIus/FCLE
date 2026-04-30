@@ -16,9 +16,12 @@
   --text:#e8eaf2;--text2:#8b92b8;--text3:#555e85;
   --accent:#4f8ef7;--green:#3db87a;--red:#e05c6a;--amber:#e8a838;
 }
-html,body{height:100%;font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text)}
+html,body{height:100%;font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
 /* ── TOP BAR ── */
-.topbar{height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;padding:0 20px;flex-shrink:0;position:sticky;top:0;z-index:50}
+.topbar-wrap{position:sticky;top:0;z-index:50;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+.topbar{height:52px;display:flex;align-items:center;gap:10px;padding:0 20px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.topbar::-webkit-scrollbar{display:none}
+.topbar-fade{position:absolute;top:0;right:0;width:60px;pointer-events:none;z-index:5;transition:opacity .3s;opacity:0}
 a.back{text-decoration:none;color:var(--text3);font-size:13px;font-weight:500;display:flex;align-items:center;gap:4px;transition:.2s}
 a.back:hover{color:var(--accent)}
 .topbar-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;flex:1}
@@ -99,13 +102,16 @@ a.back:hover{color:var(--accent)}
 </style>
 </head>
 <body>
-<div class="topbar">
-  <a class="back" href="index.html">← Hub</a>
-  <div class="topbar-title">FCLE <span>Flashcards</span></div>
-  <button class="icon-btn" id="modeBtn" onclick="toggleMode()">📖 Study Mode</button>
-  <button class="icon-btn" onclick="exportAnki()">⬇ Anki Export</button>
-  <button class="icon-btn" onclick="exportQuizlet()">⬇ Quizlet Export</button>
-  <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌙 Dark</button>
+<div class="topbar-wrap" id="topbarWrap">
+  <div class="topbar" id="topbar">
+    <a class="back" href="index.html">← Hub</a>
+    <div class="topbar-title">FCLE <span>Flashcards</span></div>
+    <button class="icon-btn" id="modeBtn" onclick="toggleMode()">📖 Study Mode</button>
+    <button class="icon-btn" onclick="exportAnki()">⬇ Anki Export</button>
+    <button class="icon-btn" onclick="exportQuizlet()">⬇ Quizlet Export</button>
+    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌙 Dark</button>
+  </div>
+  <div class="topbar-fade" id="topbarFade"></div>
 </div>
 <div class="page">
   <div class="filter-row" id="filterRow"></div>
@@ -445,6 +451,24 @@ function applyTheme(dark) {
 }
 function toggleTheme() { applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark'); }
 (function(){ applyTheme(localStorage.getItem('fcleFlashTheme') === 'dark'); })();
+
+// Topbar scroll fade
+function updateTopbarFade() {
+  const bar = document.getElementById('topbar');
+  const fade = document.getElementById('topbarFade');
+  if (!bar || !fade) return;
+  fade.style.top = bar.offsetTop + 'px';
+  fade.style.height = bar.offsetHeight + 'px';
+  const atEnd = bar.scrollLeft + bar.clientWidth >= bar.scrollWidth - 4;
+  const hasOverflow = bar.scrollWidth > bar.clientWidth;
+  fade.style.background = document.documentElement.getAttribute('data-theme') === 'dark'
+    ? 'linear-gradient(to right,transparent,rgba(0,0,0,.45))'
+    : 'linear-gradient(to right,transparent,rgba(0,0,0,.22))';
+  fade.style.opacity = (hasOverflow && !atEnd) ? '1' : '0';
+}
+document.getElementById('topbar').addEventListener('scroll', updateTopbarFade);
+window.addEventListener('resize', updateTopbarFade);
+setTimeout(updateTopbarFade, 100);
 
 // ── HELPERS ──
 function mk(tag, cls, text) {
