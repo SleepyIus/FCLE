@@ -36,9 +36,24 @@ nav::-webkit-scrollbar-thumb{background:var(--bd)}
 .ni.on{color:var(--tx);border-left-color:var(--bl);background:rgba(79,142,247,.07);font-weight:600}
 .ni.hid{display:none}
 .main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
-#welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;gap:16px}
-#welcome h2{font-family:'Playfair Display',serif;font-size:26px;font-weight:700}
-#welcome p{color:var(--t2);max-width:350px;line-height:1.6;font-size:15px}
+#welcome{flex:1;padding:28px 32px;display:flex;flex-direction:column;gap:20px;overflow-y:auto}
+.tot-wrap{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:20px 24px}
+.tot-eyebrow{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px}
+.tot-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--tx);margin-bottom:8px}
+.tot-desc{font-size:14px;color:var(--t2);line-height:1.65;margin-bottom:16px}
+.tot-btns{display:flex;gap:8px;flex-wrap:wrap}
+.tot-btn{background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--tx);cursor:pointer;font-family:inherit;transition:.15s}
+.tot-btn:hover{border-color:var(--bl);color:var(--bl)}
+.tot-btn-primary{background:var(--accent-c);border:none;border-radius:7px;padding:7px 16px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;transition:.15s}
+.tot-btn-primary:hover{opacity:.88}
+.tot-new{font-size:11px;color:var(--t3);background:var(--s2);border:1px solid var(--bd);border-radius:20px;padding:3px 10px;cursor:pointer;font-family:inherit;font-weight:600;transition:.15s;white-space:nowrap}
+.tot-new:hover{color:var(--tx)}
+.comp-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.comp-card{border-radius:12px;padding:14px 16px;cursor:pointer;transition:.12s;border:1px solid transparent}
+.comp-card:hover{filter:brightness(.97)}
+.comp-card-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px}
+.comp-card-title{font-size:14px;font-weight:700;color:var(--tx);margin-bottom:4px}
+.comp-card-desc{font-size:12px;color:var(--t2);line-height:1.5}
 .qg{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:320px;width:100%}
 .qc{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:9px 13px;font-size:13px;color:var(--t2);cursor:pointer;transition:.2s;text-align:left}
 .qc:hover{border-color:var(--bl);color:var(--bl)}
@@ -232,14 +247,42 @@ nav::-webkit-scrollbar-thumb{background:var(--bd)}
   </div>
   <div class="main" id="main">
     <div id="welcome">
-      <div style="font-size:52px">📜</div>
-      <h2>Select a Topic</h2>
-      <p>Click any topic in the sidebar to open its study content.</p>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px">
-        <span style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--t2)"><span style="width:9px;height:9px;border-radius:50%;background:#c0182a;display:inline-block"></span>Competency 1</span>
-        <span style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--t2)"><span style="width:9px;height:9px;border-radius:50%;background:#1a50c0;display:inline-block"></span>Competency 2</span>
-        <span style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--t2)"><span style="width:9px;height:9px;border-radius:50%;background:#1a7a40;display:inline-block"></span>Competency 3</span>
-        <span style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--t2)"><span style="width:9px;height:9px;border-radius:50%;background:#b8860b;display:inline-block"></span>Competency 4</span>
+      <!-- Topic of the Day -->
+      <div class="tot-wrap">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div class="tot-eyebrow" id="totEyebrow">Topic of the day</div>
+          <button class="tot-new" onclick="newTotopic()">🔀 new topic</button>
+        </div>
+        <div class="tot-title" id="totTitle">Loading…</div>
+        <div class="tot-desc" id="totDesc"></div>
+        <div class="tot-btns">
+          <button class="tot-btn" onclick="openTotTab(1)">📋 Key Points</button>
+          <button class="tot-btn" onclick="openTotTab(2)">📖 History</button>
+          <button class="tot-btn-primary" id="totPrimary" onclick="openTotTab(0)">Open Full Topic →</button>
+        </div>
+      </div>
+      <!-- Competency Cards -->
+      <div class="comp-cards">
+        <div class="comp-card" style="background:#c0182a12;border-color:#c0182a33" onclick="scrollToComp('c1')">
+          <div class="comp-card-label" style="color:#c0182a">Competency 1</div>
+          <div class="comp-card-title">Civic Foundations</div>
+          <div class="comp-card-desc">16 topics · Social contract, federalism, rights, elections</div>
+        </div>
+        <div class="comp-card" style="background:#1a50c012;border-color:#1a50c033" onclick="scrollToComp('c2')">
+          <div class="comp-card-label" style="color:#1a50c0">Competency 2</div>
+          <div class="comp-card-title">The Constitution</div>
+          <div class="comp-card-desc">19 topics · Articles, amendments, key clauses</div>
+        </div>
+        <div class="comp-card" style="background:#1a7a4012;border-color:#1a7a4033" onclick="scrollToComp('c3')">
+          <div class="comp-card-label" style="color:#1a7a40">Competency 3</div>
+          <div class="comp-card-title">Founding Documents</div>
+          <div class="comp-card-desc">13 topics · Declaration, Federalist Papers, Magna Carta</div>
+        </div>
+        <div class="comp-card" style="background:#b8860b12;border-color:#b8860b33" onclick="scrollToComp('c4')">
+          <div class="comp-card-label" style="color:#b8860b">Competency 4</div>
+          <div class="comp-card-title">Laws, Treaties &amp; Cases</div>
+          <div class="comp-card-desc">52 topics · Legislation, treaties, court cases</div>
+        </div>
       </div>
     </div>
   </div>
@@ -498,7 +541,37 @@ const NAV = [
 
 const COMP_LABELS = {1:'Competency 1 — Civic Foundations',2:'Competency 2 — The Constitution',3:'Competency 3 — Founding Documents',4:'Competency 4 — Laws, Treaties & Cases'};
 const COMP_DOTS = {1:'d1',2:'d2',3:'d3',4:'d4'};
-const COMP_COLORS = {1:'#4f8ef7',2:'#e05050',3:'#e8a838',4:'#38b890'};
+
+// ── TOPIC OF THE DAY ──
+const COMP_COLORS = {1:'#c0182a',2:'#1a50c0',3:'#1a7a40',4:'#b8860b'};
+const COMP_NAMES  = {1:'Civic Foundations',2:'The Constitution',3:'Founding Documents',4:'Laws, Treaties & Cases'};
+let totId = null;
+
+function pickTotopic(id) {
+  const keys = Object.keys(T);
+  totId = id || keys[Math.floor(Math.random() * keys.length)];
+  const t = T[totId];
+  if (!t) return;
+  const color = COMP_COLORS[t.c];
+  document.getElementById('totEyebrow').textContent = `Topic of the day \u00b7 ${COMP_NAMES[t.c]}`;
+  document.getElementById('totEyebrow').style.color = color;
+  document.getElementById('totTitle').textContent = t.label;
+  document.getElementById('totDesc').textContent = (t.content[0]||'').replace(/<[^>]+>/g,'').slice(0,220) + '\u2026';
+  document.getElementById('totPrimary').style.background = color;
+}
+
+function newTotopic() { pickTotopic(null); }
+
+function openTotTab(tabIdx) {
+  if (!totId) return;
+  showTopic(totId);
+  setTimeout(() => switchTab(totId, tabIdx), 100);
+}
+
+function scrollToComp(cid) {
+  const el = document.querySelector('[data-comp="' + cid + '"]');
+  if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
 
 // ── FINALS GUIDE QUESTIONS ──
 const FINALS = {
@@ -618,7 +691,7 @@ function buildNav() {
       });
     }
     nav.innerHTML += `
-      <div class="comp-header" onclick="toggleComp(${comp.id})">
+      <div class="comp-header" data-comp="c${comp.id}" onclick="toggleComp(${comp.id})">
         <span class="comp-arrow open" id="ca${comp.id}">▶</span>
         <span class="comp-title">Competency ${comp.id} — ${comp.label}</span>
       </div>
@@ -766,6 +839,7 @@ function toggleTheme() { applyTheme(document.documentElement.getAttribute('data-
 // ── INIT ──
 buildNav();
 buildFinals();
+pickTotopic();
 </script>
 </body>
 </html>
