@@ -25,11 +25,6 @@ button{font:inherit}
 .hero-main{padding:30px}
 h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,62px);font-weight:900;line-height:.98;margin-bottom:14px;max-width:760px}
 .lead{font-size:16px;color:var(--text2);line-height:1.65;max-width:720px}
-.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
-.primary,.secondary{display:inline-flex;align-items:center;justify-content:center;border-radius:9px;padding:10px 15px;font-size:14px;font-weight:800;border:1px solid var(--border)}
-.primary{background:var(--blue);border-color:var(--blue);color:#fff}
-.secondary{background:var(--surface2);color:var(--text)}
-.secondary:hover{border-color:var(--blue);color:var(--blue)}
 .panel{padding:20px}
 .panel-title{font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:12px}
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
@@ -47,6 +42,11 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,62px);font-weig
 .tool-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:800}
 .tool-copy{font-size:14px;color:var(--text2);line-height:1.55;flex:1}
 .tool-meta{font-size:12px;color:var(--text3);font-weight:800}
+.feedback-panel{background:linear-gradient(135deg,rgba(26,80,192,.12),rgba(25,118,79,.1));border:1px solid var(--border);border-radius:12px;padding:20px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center;box-shadow:var(--shadow);margin:18px 0}
+.feedback-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:800;margin-bottom:4px}
+.feedback-copy{color:var(--text2);font-size:14px;line-height:1.55}
+.feedback-action{display:inline-flex;align-items:center;justify-content:center;background:var(--blue);color:#fff;border-radius:10px;padding:11px 15px;font-weight:900;white-space:nowrap}
+.feedback-action:hover{opacity:.9}
 .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:24px 0 10px}
 .section-head h2{font-family:'Playfair Display',serif;font-size:26px}
 .section-head p{color:var(--text3);font-size:13px}
@@ -59,11 +59,9 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,62px);font-weig
 .competency:nth-child(4) .comp-num{color:var(--amber)}
 .comp-title{font-weight:900;margin-bottom:5px}
 .comp-copy{font-size:13px;color:var(--text2);line-height:1.45}
-.footer{margin-top:24px;padding-top:16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--text3);font-size:12px;flex-wrap:wrap}
-.feedback{color:var(--text2);font-weight:800}
-.feedback:hover{color:var(--blue)}
+.footer{margin-top:24px;padding-top:16px;border-top:1px solid var(--border);color:var(--text3);font-size:12px}
 @media(max-width:860px){.hero{grid-template-columns:1fr}.tools,.competencies{grid-template-columns:1fr 1fr}.hero-main{padding:24px}}
-@media(max-width:560px){.page{padding:16px 14px 36px}.top{align-items:flex-start}.tools,.competencies,.stats{grid-template-columns:1fr}.brand-title{font-size:21px}h1{font-size:38px}.hero-actions a{width:100%}.section-head{display:block}.section-head p{margin-top:4px}}
+@media(max-width:560px){.page{padding:16px 14px 36px}.top{align-items:flex-start}.tools,.competencies,.stats,.feedback-panel{grid-template-columns:1fr}.brand-title{font-size:21px}h1{font-size:38px}.section-head{display:block}.section-head p{margin-top:4px}.feedback-action{width:100%}}
 </style>
 </head>
 <body>
@@ -82,13 +80,8 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,62px);font-weig
   <main>
     <section class="hero">
       <div class="hero-main">
-        <h1>Pass-ready civics review, built for repeat study.</h1>
-        <p class="lead">Use the reference tool for context, the review guide for final-pass questions, and flashcards for active recall across civic foundations, the Constitution, founding documents, laws, treaties, and landmark cases.</p>
-        <div class="hero-actions">
-          <a class="primary" href="FCLE_Study_Tool.html">Start Study Tool</a>
-          <a class="secondary" href="FCLE_Flashcards.html">Review Flashcards</a>
-          <a class="secondary" href="FCLE_Study_Tool.html#review-guide">Open Review Guide</a>
-        </div>
+        <h1>Focused civics review, built for repeat study.</h1>
+        <p class="lead">Use the reference tool for context, the review guide for check-in questions, and flashcards for active recall across civic foundations, the Constitution, founding documents, laws, treaties, and landmark cases.</p>
       </div>
 
       <aside class="panel">
@@ -117,11 +110,19 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,62px);font-weig
         <div class="tool-meta">99 cards · Anki and Quizlet export</div>
       </a>
       <a class="tool-card" href="FCLE_Study_Tool.html#review-guide">
-        <div class="tool-label">Final pass</div>
+        <div class="tool-label">Review</div>
         <div class="tool-title">Review Guide</div>
         <p class="tool-copy">High-yield prompts organized by competency for the last review before exam day.</p>
         <div class="tool-meta">Question sets · Competency tabs</div>
       </a>
+    </section>
+
+    <section class="feedback-panel">
+      <div>
+        <div class="feedback-title">Help improve the hub</div>
+        <p class="feedback-copy">Spotted a confusing topic, missing case, typo, or feature idea? Send it in so the FCLE tool can keep getting sharper.</p>
+      </div>
+      <a class="feedback-action" href="mailto:abrahab@phsc.edu?subject=Recommendations%20for%20the%20FCLE%20Study%20Hub">Send feedback</a>
     </section>
 
     <section>
@@ -156,7 +157,6 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,62px);font-weig
 
   <footer class="footer">
     <span>FCLE Study Hub · local progress only</span>
-    <a class="feedback" href="mailto:abrahab@phsc.edu?subject=Recommendations%20for%20the%20FCLE%20Study%20Hub">Help improve the hub</a>
   </footer>
 </div>
 

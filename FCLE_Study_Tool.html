@@ -23,6 +23,8 @@ a.back:hover{color:var(--bl)}
 .thbtn:hover{border-color:var(--bl);color:var(--bl)}
 .fbtn-s{width:100%;background:var(--bl);border:1px solid var(--bl);border-radius:7px;padding:7px 10px;font-size:12px;font-weight:700;color:#fff;display:flex;align-items:center;gap:6px;transition:.2s;cursor:pointer;font-family:inherit;margin-bottom:8px}
 .fbtn-s:hover{opacity:.85}
+.feedback-side{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:7px 10px;font-size:12px;font-weight:800;color:var(--tx);display:flex;align-items:center;gap:6px;text-decoration:none;transition:.2s;margin-bottom:8px}
+.feedback-side:hover{border-color:var(--bl);color:var(--bl)}
 .srch{padding:10px 14px;border-bottom:1px solid var(--bd);flex-shrink:0}
 .srch input{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:8px;color:var(--tx);font-family:inherit;font-size:13px;padding:8px 11px;outline:none}
 .srch input:focus{border-color:var(--bl)}
@@ -57,15 +59,32 @@ nav::-webkit-scrollbar-thumb{background:var(--bd)}
 .mini-stat{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:11px 12px}
 .mini-stat strong{display:block;font-size:20px;color:var(--tx);line-height:1}
 .mini-stat span{display:block;font-size:10px;color:var(--t3);font-weight:800;letter-spacing:.07em;text-transform:uppercase;margin-top:5px}
-.plan-actions{display:flex;gap:8px;flex-wrap:wrap}
-.plan-link{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--bd);background:var(--s2);color:var(--tx);border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;text-decoration:none;transition:.15s}
-.plan-link:hover{border-color:var(--bl);color:var(--bl)}
-.comp-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.comp-card{border-radius:12px;padding:14px 16px;cursor:pointer;transition:.12s;border:1px solid transparent}
-.comp-card:hover{filter:brightness(.97)}
-.comp-card-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px}
-.comp-card-title{font-size:14px;font-weight:700;color:var(--tx);margin-bottom:4px}
-.comp-card-desc{font-size:12px;color:var(--t2);line-height:1.5}
+.plan-reset{border:1px solid var(--bd);background:var(--s2);color:var(--t2);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800;cursor:pointer;justify-self:start}
+.plan-reset:hover{border-color:var(--rd);color:var(--rd)}
+.book-map{display:flex;flex-direction:column;gap:10px}
+.book-map-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
+.book-map-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--tx)}
+.book-map-sub{font-size:13px;color:var(--t3);line-height:1.45}
+.study-accordions{display:flex;flex-direction:column;gap:10px}
+.study-acc{background:var(--sf);border:1px solid var(--bd);border-radius:14px;overflow:hidden}
+.study-acc-head{width:100%;border:0;background:var(--sf);color:var(--tx);display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;padding:15px 18px;text-align:left;cursor:pointer}
+.study-acc-head:hover{background:var(--s2)}
+.study-acc-dot{width:9px;height:9px;border-radius:50%}
+.study-acc-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;line-height:1.1}
+.study-acc-meta{font-size:11px;color:var(--t3);font-weight:800;letter-spacing:.07em;text-transform:uppercase;margin-top:3px}
+.study-acc-count{font-size:12px;color:var(--t2);background:var(--s2);border:1px solid var(--bd);border-radius:999px;padding:5px 10px;font-weight:800;white-space:nowrap}
+.study-acc-arrow{font-size:12px;color:var(--t3);transition:transform .25s}
+.study-acc.open .study-acc-arrow{transform:rotate(90deg)}
+.study-acc-panel{max-height:0;overflow:hidden;transition:max-height .28s ease;border-top:1px solid transparent}
+.study-acc.open .study-acc-panel{border-top-color:var(--bd)}
+.study-acc-body{padding:8px 12px 14px}
+.study-subhead{font-size:10px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:var(--t3);padding:11px 8px 5px}
+.study-topic-row{width:100%;border:1px solid transparent;background:transparent;color:var(--tx);border-radius:10px;padding:10px 10px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;text-align:left;cursor:pointer}
+.study-topic-row:hover{background:var(--s2);border-color:var(--bd)}
+.study-topic-title{font-size:14px;font-weight:800;line-height:1.25}
+.study-topic-tag{font-size:12px;color:var(--t2);line-height:1.35;margin-top:3px}
+.study-topic-status{font-size:12px;color:var(--t3);font-weight:900;white-space:nowrap}
+.study-topic-row.done .study-topic-status{color:var(--gn)}
 .qg{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:320px;width:100%}
 .qc{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:9px 13px;font-size:13px;color:var(--t2);cursor:pointer;transition:.2s;text-align:left}
 .qc:hover{border-color:var(--bl);color:var(--bl)}
@@ -246,6 +265,7 @@ nav::-webkit-scrollbar-thumb{background:var(--bd)}
         <div class="sb-course"><span style="color:var(--tx)">FCLE</span> <span style="color:#1a50c0">Study Hub</span></div>
       </div>
       <button class="fbtn-s" onclick="openFinals()">📋&nbsp;&nbsp;Review Guide</button>
+      <a class="feedback-side" href="mailto:abrahab@phsc.edu?subject=Recommendations%20for%20the%20FCLE%20Study%20Hub">✉&nbsp;&nbsp;Help improve the hub</a>
       <div class="mob-hint">Select a Topic Below</div>
       <div class="mob-legend">
         <span><span class="ml-dot" style="background:#c0182a"></span>Civic Foundations</span>
@@ -268,9 +288,7 @@ nav::-webkit-scrollbar-thumb{background:var(--bd)}
         <div class="tot-title" id="totTitle">Loading…</div>
         <div class="tot-desc" id="totDesc"></div>
         <div class="tot-btns">
-          <button class="tot-btn" onclick="openTotTab(1)">📋 Key Points</button>
-          <button class="tot-btn" onclick="openTotTab(2)">📖 History</button>
-          <button class="tot-btn-primary" id="totPrimary" onclick="openTotTab(0)">Open Full Topic →</button>
+          <button class="tot-btn-primary" id="totPrimary" onclick="openTotTab(0)">Open topic</button>
         </div>
       </div>
       <!-- Competency Cards -->
@@ -284,36 +302,19 @@ nav::-webkit-scrollbar-thumb{background:var(--bd)}
         <div class="mini-stats">
           <div class="mini-stat"><strong id="openedTopics">0</strong><span>Topics opened</span></div>
           <div class="mini-stat"><strong id="totalTopics">0</strong><span>Total topics</span></div>
-          <div class="mini-stat"><strong id="openedPct">0%</strong><span>Reference pass</span></div>
+          <div class="mini-stat"><strong id="openedPct">0%</strong><span>Reference progress</span></div>
         </div>
-        <div class="plan-actions">
-          <a class="plan-link" href="FCLE_Flashcards.html">Open Flashcards</a>
-          <button class="plan-link" onclick="openFinals()">Open Review Guide</button>
-          <button class="plan-link" onclick="resetTopicProgress()">Reset opened topics</button>
-        </div>
+        <button class="plan-reset" onclick="resetTopicProgress()">Reset opened topics</button>
       </div>
 
-      <div class="comp-cards">
-        <div class="comp-card" style="background:#c0182a12;border-color:#c0182a33" onclick="scrollToComp('c1')">
-          <div class="comp-card-label" style="color:#c0182a">Competency 1</div>
-          <div class="comp-card-title">Civic Foundations</div>
-          <div class="comp-card-desc">Core topics · Social contract, federalism, rights, elections</div>
+      <div class="book-map">
+        <div class="book-map-head">
+          <div>
+            <div class="book-map-title">Competency Study Map</div>
+            <div class="book-map-sub">Accordion sections mirror the Book workflow: open a competency, pick a topic, then return here for the next one.</div>
+          </div>
         </div>
-        <div class="comp-card" style="background:#1a50c012;border-color:#1a50c033" onclick="scrollToComp('c2')">
-          <div class="comp-card-label" style="color:#1a50c0">Competency 2</div>
-          <div class="comp-card-title">The Constitution</div>
-          <div class="comp-card-desc">Core topics · Articles, amendments, key clauses</div>
-        </div>
-        <div class="comp-card" style="background:#1a7a4012;border-color:#1a7a4033" onclick="scrollToComp('c3')">
-          <div class="comp-card-label" style="color:#1a7a40">Competency 3</div>
-          <div class="comp-card-title">Founding Documents</div>
-          <div class="comp-card-desc">Core topics · Declaration, Federalist Papers, Magna Carta</div>
-        </div>
-        <div class="comp-card" style="background:#b8860b12;border-color:#b8860b33" onclick="scrollToComp('c4')">
-          <div class="comp-card-label" style="color:#b8860b">Competency 4</div>
-          <div class="comp-card-title">Laws, Treaties &amp; Cases</div>
-          <div class="comp-card-desc">Core topics · Legislation, treaties, court cases</div>
-        </div>
+        <div class="study-accordions" id="competencyAccordions"></div>
       </div>
     </div>
   </div>
@@ -606,6 +607,17 @@ function updateTopicProgressUI() {
   document.querySelectorAll('.ni[data-id]').forEach(el => {
     el.classList.toggle('done', !!topicProgress[el.dataset.id]);
   });
+  document.querySelectorAll('.study-topic-row[data-id]').forEach(el => {
+    const opened = !!topicProgress[el.dataset.id];
+    el.classList.toggle('done', opened);
+    const status = el.querySelector('.study-topic-status');
+    if (status) status.textContent = opened ? 'Opened' : 'Open';
+  });
+  NAV.forEach(comp => {
+    const ids = topicIdsForComp(comp);
+    const countEl = document.getElementById('studyCount' + comp.id);
+    if (countEl) countEl.textContent = `${ids.filter(id => topicProgress[id]).length}/${ids.length} opened`;
+  });
 }
 
 function markTopicOpened(id) {
@@ -643,8 +655,76 @@ function openTotTab(tabIdx) {
   setTimeout(() => switchTab(totId, tabIdx), 100);
 }
 
+function topicIdsForComp(comp) {
+  if (comp.topics) return comp.topics.filter(id => T[id]);
+  return comp.subs.flatMap(sub => sub.topics).filter(id => T[id]);
+}
+
+function topicRow(id) {
+  const t = T[id];
+  const opened = !!topicProgress[id];
+  return `<button type="button" class="study-topic-row ${opened ? 'done' : ''}" data-id="${id}" onclick="showTopic('${id}')">
+    <span>
+      <span class="study-topic-title">${t.label}</span>
+      <span class="study-topic-tag">${t.tag}</span>
+    </span>
+    <span class="study-topic-status">${opened ? 'Opened' : 'Open'}</span>
+  </button>`;
+}
+
+function buildMainAccordions() {
+  const wrap = document.getElementById('competencyAccordions');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  NAV.forEach(comp => {
+    const ids = topicIdsForComp(comp);
+    const opened = ids.filter(id => topicProgress[id]).length;
+    const isOpen = comp.id === 1;
+    let body = '';
+    if (comp.topics) {
+      body = comp.topics.filter(id => T[id]).map(topicRow).join('');
+    } else {
+      body = comp.subs.map(sub => {
+        const rows = sub.topics.filter(id => T[id]).map(topicRow).join('');
+        return rows ? `<div class="study-subhead">${sub.lbl}</div>${rows}` : '';
+      }).join('');
+    }
+    wrap.innerHTML += `
+      <section class="study-acc ${isOpen ? 'open' : ''}" id="studyAcc${comp.id}" data-comp="c${comp.id}">
+        <button type="button" class="study-acc-head" onclick="toggleStudyAccordion(${comp.id})" aria-expanded="${isOpen ? 'true' : 'false'}" aria-controls="studyPanel${comp.id}">
+          <span class="study-acc-dot ${DOT_CLS[comp.id]}"></span>
+          <span>
+            <span class="study-acc-title">Competency ${comp.id}: ${comp.label}</span>
+            <span class="study-acc-meta">${ids.length} topics</span>
+          </span>
+          <span class="study-acc-count" id="studyCount${comp.id}">${opened}/${ids.length} opened</span>
+          <span class="study-acc-arrow" id="studyArrow${comp.id}">▶</span>
+        </button>
+        <div class="study-acc-panel" id="studyPanel${comp.id}">
+          <div class="study-acc-body">${body}</div>
+        </div>
+      </section>`;
+  });
+  document.querySelectorAll('.study-acc.open .study-acc-panel').forEach(panel => {
+    panel.style.maxHeight = panel.scrollHeight + 'px';
+  });
+}
+
+function toggleStudyAccordion(id, forceOpen) {
+  const acc = document.getElementById('studyAcc' + id);
+  const panel = document.getElementById('studyPanel' + id);
+  const head = acc ? acc.querySelector('.study-acc-head') : null;
+  if (!acc || !panel || !head) return;
+  const shouldOpen = forceOpen === true || (forceOpen !== false && !acc.classList.contains('open'));
+  acc.classList.toggle('open', shouldOpen);
+  head.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+  panel.style.maxHeight = shouldOpen ? panel.scrollHeight + 'px' : '0';
+}
+
 function scrollToComp(cid) {
-  const el = document.querySelector('[data-comp="' + cid + '"]');
+  const compId = Number(String(cid).replace('c',''));
+  if (compId) toggleStudyAccordion(compId, true);
+  const el = document.querySelector('#studyAcc' + compId) || document.querySelector('[data-comp="' + cid + '"]');
   if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
@@ -914,6 +994,7 @@ function toggleTheme() { applyTheme(document.documentElement.getAttribute('data-
 
 // ── INIT ──
 buildNav();
+buildMainAccordions();
 buildFinals();
 pickTotopic();
 updateTopicProgressUI();
