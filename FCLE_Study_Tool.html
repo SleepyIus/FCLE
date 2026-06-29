@@ -679,7 +679,7 @@ function buildMainAccordions() {
   NAV.forEach(comp => {
     const ids = topicIdsForComp(comp);
     const opened = ids.filter(id => topicProgress[id]).length;
-    const isOpen = comp.id === 1;
+    const isOpen = false;
     let body = '';
     if (comp.topics) {
       body = comp.topics.filter(id => T[id]).map(topicRow).join('');
@@ -847,10 +847,10 @@ function buildNav() {
     }
     nav.innerHTML += `
       <div class="comp-header" data-comp="c${comp.id}" onclick="toggleComp(${comp.id})">
-        <span class="comp-arrow open" id="ca${comp.id}">▶</span>
+        <span class="comp-arrow" id="ca${comp.id}">▶</span>
         <span class="comp-title">Competency ${comp.id} — ${comp.label}</span>
       </div>
-      <div class="comp-group" id="cg${comp.id}" style="max-height:none">${items}</div>`;
+      <div class="comp-group closed" id="cg${comp.id}" style="max-height:0">${items}</div>`;
   });
 }
 

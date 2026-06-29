@@ -30,6 +30,17 @@ a.back:hover{color:var(--accent)}
 .icon-btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 /* ── LAYOUT ── */
 .page{max-width:1200px;margin:0 auto;padding:24px 20px 60px}
+/* ── MODE CHOICE ── */
+.mode-choice{max-width:860px;margin:34px auto 0;text-align:center}
+.mode-choice-kicker{font-size:11px;color:var(--accent);font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.mode-choice h1{font-family:'Playfair Display',serif;font-size:34px;line-height:1.1;margin-bottom:22px}
+.mode-options{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mode-card{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:12px;padding:24px 20px;min-height:170px;cursor:pointer;font-family:inherit;text-align:left;display:flex;flex-direction:column;justify-content:space-between;transition:transform .15s,box-shadow .15s,border-color .15s}
+.mode-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.1);border-color:var(--accent)}
+.mode-icon{font-size:28px;line-height:1;margin-bottom:18px}
+.mode-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700}
+.mode-text{font-size:13px;color:var(--text3);font-weight:600;margin-top:5px}
+.flash-workspace[hidden],.mode-choice[hidden]{display:none!important}
 /* ── FILTER ROW ── */
 .filter-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:20px;align-items:center}
 .filt{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s}
@@ -50,6 +61,7 @@ a.back:hover{color:var(--accent)}
 .stat-l{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
 .stat-v{font-size:22px;font-weight:700;margin-top:2px;color:var(--text)}
 .progress-note{margin:-8px 0 18px;color:var(--text3);font-size:12px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.progress-actions{display:flex;gap:8px;flex-wrap:wrap}
 .reset-btn{border:1px solid var(--border);background:var(--surface2);color:var(--text2);border-radius:999px;padding:5px 11px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .reset-btn:hover{border-color:var(--red);color:var(--red)}
 /* ── GRID VIEW ── */
@@ -105,7 +117,7 @@ a.back:hover{color:var(--accent)}
 .empty{text-align:center;padding:60px 20px;color:var(--text3)}
 .empty-icon{font-size:40px;margin-bottom:12px}
 /* ── MOBILE ── */
-@media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr}#gridView{grid-template-columns:1fr 1fr}.study-q{font-size:15px;padding:24px 20px 16px}.study-a{padding:16px 20px}.topbar-title{display:none}}
+@media(max-width:600px){.mode-options{grid-template-columns:1fr}.mode-choice h1{font-size:28px}.stats-row{grid-template-columns:1fr 1fr}#gridView{grid-template-columns:1fr 1fr}.study-q{font-size:15px;padding:24px 20px 16px}.study-a{padding:16px 20px}.topbar-title{display:none}}
 </style>
 </head>
 <body>
@@ -113,58 +125,83 @@ a.back:hover{color:var(--accent)}
   <div class="topbar" id="topbar">
     <a class="back" href="index.html">← Back to Hub</a>
     <div class="topbar-title">FCLE <span>Flashcards</span></div>
-    <button class="icon-btn" onclick="exportAnki()">⬇ Anki Export</button>
-    <button class="icon-btn" onclick="exportQuizlet()">⬇ Quizlet Export</button>
+    <button class="icon-btn" onclick="exportAnki()">⬇ Anki Import (.txt)</button>
+    <button class="icon-btn" onclick="exportQuizlet()">⬇ Quizlet PDF</button>
     <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌙 Dark</button>
   </div>
   <div class="topbar-fade" id="topbarFade"></div>
 </div>
 <div class="page">
-  <div class="filter-row" id="filterRow"></div>
-  <div class="stats-row">
-    <div class="stat"><div class="stat-l">Total</div><div class="stat-v" id="sTotal">0</div></div>
-    <div class="stat"><div class="stat-l">Showing</div><div class="stat-v" id="sShowing">0</div></div>
-    <div class="stat"><div class="stat-l">⚑ Review</div><div class="stat-v" id="sReview" style="color:var(--red)">0</div></div>
-    <div class="stat"><div class="stat-l">~ Almost</div><div class="stat-v" id="sAlmost" style="color:var(--amber)">0</div></div>
-  </div>
-  <div class="progress-note">
-    <span id="progressNote">Progress is saved on this device.</span>
-    <button class="reset-btn" onclick="resetProgress()">Reset card marks</button>
-  </div>
-  <div id="gridView"></div>
-  <div id="studyView">
-    <div class="study-wrap">
-      <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
-        <button class="icon-btn" id="shuffleBtn" onclick="toggleShuffle()">🔀 Shuffle</button>
+  <section class="mode-choice" id="modeChoice">
+    <div class="mode-choice-kicker">FCLE Flashcards</div>
+    <h1>Choose a flashcard view</h1>
+    <div class="mode-options">
+      <button class="mode-card" onclick="chooseMode('study')">
+        <span class="mode-icon">📖</span>
+        <span>
+          <span class="mode-title">Study Mode</span>
+          <span class="mode-text">One card at a time</span>
+        </span>
+      </button>
+      <button class="mode-card" onclick="chooseMode('grid')">
+        <span class="mode-icon">⊞</span>
+        <span>
+          <span class="mode-title">Grid Mode</span>
+          <span class="mode-text">Browse the full deck</span>
+        </span>
+      </button>
+    </div>
+  </section>
+  <div class="flash-workspace" id="flashWorkspace" hidden>
+    <div class="filter-row" id="filterRow"></div>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-l">Total</div><div class="stat-v" id="sTotal">0</div></div>
+      <div class="stat"><div class="stat-l">Showing</div><div class="stat-v" id="sShowing">0</div></div>
+      <div class="stat"><div class="stat-l">⚑ Review</div><div class="stat-v" id="sReview" style="color:var(--red)">0</div></div>
+      <div class="stat"><div class="stat-l">~ Almost</div><div class="stat-v" id="sAlmost" style="color:var(--amber)">0</div></div>
+    </div>
+    <div class="progress-note">
+      <span id="progressNote">Progress is saved on this device.</span>
+      <div class="progress-actions">
+        <button class="reset-btn" onclick="showModeChoice()">Change mode</button>
+        <button class="reset-btn" onclick="resetProgress()">Reset card marks</button>
       </div>
-      <div class="study-prog-bar"><div class="study-prog-fill" id="studyProg"></div></div>
-      <div class="study-meta">
-        <span class="study-counter" id="studyCtr">1 / 1</span>
-        <span class="study-cat" id="studyCat"></span>
-      </div>
-      <div class="study-card" id="studyCard" onclick="flipStudy()">
-        <div class="study-q" id="studyQ"></div>
-        <div class="study-divider" id="studyDiv" style="display:none"></div>
-        <div class="study-a" id="studyA"></div>
-        <div class="study-hint" id="studyHint">Click to reveal answer</div>
-      </div>
-      <div class="study-actions" id="studyActions">
-        <div class="study-btns">
-          <button class="study-btn got" onclick="markCard('mastered')">✓ Got it<span class="kbd">[1]</span></button>
-          <button class="study-btn al" onclick="markCard('maybe')">~ Almost<span class="kbd">[2]</span></button>
-          <button class="study-btn rv" onclick="markCard('review')">⚑ Review<span class="kbd">[3]</span></button>
+    </div>
+    <div id="gridView"></div>
+    <div id="studyView">
+      <div class="study-wrap">
+        <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+          <button class="icon-btn" id="shuffleBtn" onclick="toggleShuffle()">🔀 Shuffle</button>
         </div>
-        <div class="nav-btns">
-          <button class="nav-btn" onclick="studyNav(-1)">← Prev<span class="kbd">[J]</span></button>
-          <button class="nav-btn" onclick="studyNav(1)">Next →<span class="kbd">[L]</span></button>
+        <div class="study-prog-bar"><div class="study-prog-fill" id="studyProg"></div></div>
+        <div class="study-meta">
+          <span class="study-counter" id="studyCtr">1 / 1</span>
+          <span class="study-cat" id="studyCat"></span>
         </div>
+        <div class="study-card" id="studyCard" onclick="flipStudy()">
+          <div class="study-q" id="studyQ"></div>
+          <div class="study-divider" id="studyDiv" style="display:none"></div>
+          <div class="study-a" id="studyA"></div>
+          <div class="study-hint" id="studyHint">Click to reveal answer</div>
+        </div>
+        <div class="study-actions" id="studyActions">
+          <div class="study-btns">
+            <button class="study-btn got" onclick="markCard('mastered')">✓ Got it<span class="kbd">[1]</span></button>
+            <button class="study-btn al" onclick="markCard('maybe')">~ Almost<span class="kbd">[2]</span></button>
+            <button class="study-btn rv" onclick="markCard('review')">⚑ Review<span class="kbd">[3]</span></button>
+          </div>
+          <div class="nav-btns">
+            <button class="nav-btn" onclick="studyNav(-1)">← Prev<span class="kbd">[J]</span></button>
+            <button class="nav-btn" onclick="studyNav(1)">Next →<span class="kbd">[L]</span></button>
+          </div>
+        </div>
+        <p style="text-align:center;font-size:12px;color:var(--text3);margin-top:12px">Space to flip · ← → or J/L to navigate · 1/2/3 to mark</p>
       </div>
-      <p style="text-align:center;font-size:12px;color:var(--text3);margin-top:12px">Space to flip · ← → or J/L to navigate · 1/2/3 to mark</p>
     </div>
   </div>
 </div>
 <script>
-const CARDS = [
+const SOURCE_CARDS = [
   {"cat": "foundations", "catLabel": "Civic Foundations", "q": "What is the social contract, and who were the three main thinkers?", "a": "<ul><li><strong>Social contract</strong>: individuals surrender some freedoms in exchange for government protection</li><li><strong>Locke</strong>: life, liberty, <strong>property</strong> — greatest influence on founders</li><li><strong>Hobbes</strong>: humans are selfish → submit to sovereign state for peace</li><li><strong>Rousseau</strong>: people are naturally free and equal; state protects their rights</li></ul>"},
   {"cat": "foundations", "catLabel": "Civic Foundations", "q": "How does Locke's theory differ from what Jefferson wrote in the Declaration?", "a": "<ul><li>Locke: <strong>life, liberty, property</strong></li><li>Jefferson adapted to <strong>life, liberty, pursuit of happiness</strong></li><li>Both rooted in natural rights / social contract theory</li></ul>"},
   {"cat": "foundations", "catLabel": "Civic Foundations", "q": "What is popular sovereignty?", "a": "<ul><li>Ultimate political authority rests with <strong>the people</strong></li><li>Government is legitimate only with <strong>consent of the governed</strong></li><li>Expressed through elections, referendums, amendments</li><li>Preamble: <strong>\"We the People\"</strong></li></ul>"},
@@ -265,10 +302,123 @@ const CARDS = [
   {"cat": "cases", "catLabel": "Court Cases", "q": "Hazelwood v. Kuhlmeier (1988) — how does it differ from Tinker?", "a": "<ul><li>School officials can censor <strong>school-sponsored speech</strong> (newspapers, plays) for legitimate educational reasons</li><li><strong>Tinker</strong>: personal student speech protected unless it causes substantial disruption</li><li><strong>Hazelwood</strong>: school-SPONSORED speech — school has editorial control as part of the curriculum</li><li>Key distinction: personal expression (Tinker) vs. school-sponsored publication (Hazelwood)</li></ul>"},
   {"cat": "cases", "catLabel": "Court Cases", "q": "Shaw v. Reno (1993) — what did it limit?", "a": "<ul><li>Race cannot be the <strong>predominant factor</strong> in drawing congressional district lines</li><li>North Carolina's bizarrely shaped majority-Black district triggered <strong>strict scrutiny</strong> under Equal Protection</li><li>States can create majority-minority districts but cannot be blatantly race-driven in shape</li><li>Key tension: Voting Rights Act (sometimes requires majority-minority districts) vs. Equal Protection</li></ul>"},];
 
+function decodeHtmlText(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
+}
+
+function escapeHtmlText(text) {
+  return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function cleanSubject(text) {
+  return text
+    .replace(/,?\s+and\s+(who|what|where|why|how)\b.*$/i, '')
+    .replace(/^the\s+/i, '')
+    .trim();
+}
+
+function sourceSubject(question) {
+  if (/Locke/i.test(question) && /Jefferson/i.test(question)) return 'Locke and Jefferson';
+  if (/Electoral College/i.test(question)) return 'the Electoral College';
+  if (/social contract/i.test(question)) return 'social contract theory';
+  const direct = question.match(/^What\s+(?:is|are|was|were|does|did)\s+(.+?)(?:\s+(?:do|protect|establish|create|secure|provide|mean))?\?$/i);
+  if (direct) return cleanSubject(direct[1]);
+  return cleanSubject(question
+    .replace(/\s*—\s*.*/, '')
+    .replace(/\?.*/, '')
+    .replace(/,?\s+and\s+(who|what|where|why|how)\b.*$/i, '')
+    .replace(/^(What|Who|How|Why|Give)\s+(is|are|was|were|did|does|do|wrote|three examples of|four amendments)?\s*/i, ''));
+}
+
+function factLead(fact) {
+  const cleaned = fact.replace(/^\d+\.\s*/, '').trim();
+  const match = cleaned.match(/^([^:=—-]{2,80})(?:\s*[:=]\s*|\s+—\s+|\s+-\s+)(.+)$/);
+  if (!match) return null;
+  const lead = match[1].trim();
+  const rest = match[2].trim();
+  if (!rest || lead.split(' ').length > 9) return null;
+  return { lead, rest };
+}
+
+function splitAtomicFacts(text) {
+  const normalized = text.replace(/\s+/g, ' ').trim();
+  if (!normalized) return [];
+  const lead = factLead(normalized);
+  if (lead && lead.rest.includes(';')) {
+    return lead.rest.split(/\s*;\s+/).filter(Boolean).map(part => `${lead.lead}: ${part}`);
+  }
+  const semicolonParts = normalized.split(/\s*;\s+/).filter(Boolean);
+  if (semicolonParts.length > 1 && semicolonParts.every(part => part.length >= 18)) return semicolonParts;
+  return [normalized];
+}
+
+function atomicQuestion(card, fact, index) {
+  const lead = factLead(fact);
+  if (lead) return `In ${sourceSubject(card.q)}, what should you remember about ${lead.lead}?`;
+  const subject = sourceSubject(card.q);
+  if (/^Established\b/i.test(fact)) return `What did ${subject} establish?`;
+  if (/^Created\b/i.test(fact)) return `What did ${subject} create?`;
+  if (/^Struck down\b/i.test(fact)) return `What did ${subject} strike down?`;
+  if (/amendment|clause|article/i.test(subject)) return `What is one key fact about ${subject}?`;
+  if (/ v\. |Act|Treaty|Compromise|Purchase|Ordinance|Charter|Papers|Compact|Declaration|Constitution/i.test(subject)) {
+    return `What is one key FCLE fact about ${subject}?`;
+  }
+  return `In ${subject}, what fact starts with "${factHint(fact)}..."?`;
+}
+
+function atomicAnswer(fact) {
+  const lead = factLead(fact);
+  const answer = lead ? lead.rest : fact;
+  return `<p>${escapeHtmlText(answer)}</p>`;
+}
+
+function factHint(fact) {
+  const words = fact.replace(/^\d+\.\s*/, '').split(' ').filter(Boolean);
+  const hintLength = Math.min(6, Math.max(3, Math.ceil(words.length / 3)));
+  return words.slice(0, hintLength).join(' ');
+}
+
+function extractFacts(answerHtml) {
+  const items = [...answerHtml.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/gi)].map(match => decodeHtmlText(match[1]));
+  const facts = items.length ? items : [decodeHtmlText(answerHtml)];
+  return facts.flatMap(splitAtomicFacts);
+}
+
+function buildAtomicCards(sourceCards) {
+  const seen = new Set();
+  const questionSeen = {};
+  const atomic = [];
+  sourceCards.forEach(card => {
+    extractFacts(card.a).forEach((fact, index) => {
+      const key = `${card.cat}|${card.q}|${fact}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      let question = atomicQuestion(card, fact, index);
+      questionSeen[question] = (questionSeen[question] || 0) + 1;
+      if (questionSeen[question] > 1) {
+        question = question.replace(/\?$/, ` #${questionSeen[question]}: "${factHint(fact)}..."?`);
+      }
+      atomic.push({
+        id: `atomic-${atomic.length + 1}`,
+        cat: card.cat,
+        catLabel: card.catLabel,
+        q: question,
+        a: atomicAnswer(fact),
+        sourceQ: card.q
+      });
+    });
+  });
+  return atomic;
+}
+
+const CARDS = buildAtomicCards(SOURCE_CARDS);
+
 // ── STATE ──
 const STATUS_KEY = 'fcleFlashStatus';
 let status = loadStatus(); // '' | 'review' | 'maybe' | 'mastered'
-let curCat = 'all', curStatus = '', isStudy = false, studyDeck = [], studyIdx = 0, studyFlipped = false, isShuffled = false;
+let curCat = 'all', curStatus = '', selectedMode = '', isStudy = false, studyDeck = [], studyIdx = 0, studyFlipped = false, isShuffled = false;
 
 function loadStatus() {
   try {
@@ -320,10 +470,6 @@ function buildFilters() {
   al.id = 'filtAl';
   al.onclick = () => setFilter(curCat,'maybe');
   row.appendChild(al);
-  const sm = mk('button','study-mode-btn','📖 Study Mode');
-  sm.id = 'modeBtn';
-  sm.onclick = toggleMode;
-  row.appendChild(sm);
 }
 
 function toggleShuffle() {
@@ -351,21 +497,25 @@ function setFilter(cat, st) {
 function getDeck() {
   const filtered = CARDS.filter(c => {
     if (curCat !== 'all' && c.cat !== curCat) return false;
-    if (curStatus && status[c.q] !== curStatus) return false;
+    if (curStatus && status[cardKey(c)] !== curStatus) return false;
     return true;
   });
   return isShuffled ? shuffleArr(filtered) : filtered;
 }
 
+function cardKey(card) {
+  return card.id || card.q;
+}
+
 // ── STATS ──
 function updateStats() {
   const deck = getDeck();
-  const marked = CARDS.filter(c => status[c.q]).length;
-  const mastered = CARDS.filter(c => status[c.q] === 'mastered').length;
+  const marked = CARDS.filter(c => status[cardKey(c)]).length;
+  const mastered = CARDS.filter(c => status[cardKey(c)] === 'mastered').length;
   document.getElementById('sTotal').textContent = CARDS.length;
   document.getElementById('sShowing').textContent = deck.length;
-  document.getElementById('sReview').textContent = CARDS.filter(c => status[c.q] === 'review').length;
-  document.getElementById('sAlmost').textContent = CARDS.filter(c => status[c.q] === 'maybe').length;
+  document.getElementById('sReview').textContent = CARDS.filter(c => status[cardKey(c)] === 'review').length;
+  document.getElementById('sAlmost').textContent = CARDS.filter(c => status[cardKey(c)] === 'maybe').length;
   document.getElementById('progressNote').textContent =
     `${marked} card${marked===1?'':'s'} marked on this device · ${mastered} mastered`;
 }
@@ -377,7 +527,7 @@ function renderGrid() {
   if (!deck.length) { grid.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><p>No cards match this filter.</p></div>'; return; }
   grid.innerHTML = '';
   deck.forEach((card, i) => {
-    const st = status[card.q] || '';
+    const st = status[cardKey(card)] || '';
     const icon = st === 'review' ? '⚑' : st === 'maybe' ? '~' : '';
     const div = mk('div','fc','');
     div.innerHTML = `<div class="fc-badge">${card.catLabel}</div>${icon?`<div class="fc-rv" style="color:${st==='review'?'var(--red)':'var(--amber)'}">${icon}</div>`:''}
@@ -433,8 +583,8 @@ function studyNav(dir) {
 function markCard(st) {
   if (!studyDeck.length) return;
   const card = studyDeck[studyIdx];
-  if (st) status[card.q] = st;
-  else delete status[card.q];
+  if (st) status[cardKey(card)] = st;
+  else delete status[cardKey(card)];
   saveStatus();
   updateStats();
   studyNav(1);
@@ -449,15 +599,31 @@ function resetProgress() {
   updateStats();
 }
 
-// ── TOGGLE MODE ──
-function toggleMode() {
-  isStudy = !isStudy;
+// ── MODE CHOICE ──
+function chooseMode(mode) {
+  selectedMode = mode;
+  isStudy = mode === 'study';
+  document.getElementById('modeChoice').hidden = true;
+  document.getElementById('flashWorkspace').hidden = false;
   document.getElementById('gridView').style.display = isStudy ? 'none' : 'grid';
   document.getElementById('studyView').style.display = isStudy ? 'block' : 'none';
-  const btn = document.getElementById('modeBtn');
-  btn.textContent = isStudy ? '⊞ Grid View' : '📖 Study Mode';
-  btn.classList.toggle('active', isStudy);
-  if (isStudy) { buildStudyDeck(); renderStudy(); }
+  if (isStudy) {
+    buildStudyDeck();
+    renderStudy();
+  } else {
+    renderGrid();
+  }
+  updateStats();
+}
+
+function showModeChoice() {
+  selectedMode = '';
+  isStudy = false;
+  studyFlipped = false;
+  document.getElementById('flashWorkspace').hidden = true;
+  document.getElementById('modeChoice').hidden = false;
+  document.getElementById('gridView').style.display = 'none';
+  document.getElementById('studyView').style.display = 'none';
   updateStats();
 }
 
@@ -486,25 +652,129 @@ function exportAnki() {
   a.click();
 }
 
-function exportQuizlet() {
-  // Quizlet import format: term and definition separated by tab, cards separated by newline
-  // Strip HTML tags from answers for clean Quizlet text
-  function stripHtml(html) {
-    const tmp = document.createElement('div');
-    tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || '';
-  }
-  const deck = getDeck();
-  let txt = '';
-  deck.forEach(c => {
-    const term = c.q.replace(/\t/g, ' ');
-    const def = stripHtml(c.a).replace(/\t/g, ' ').replace(/\n+/g, ' ').trim();
-    txt += `${term}\t${def}\n`;
+function stripHtml(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+}
+
+function normalizePdfText(text) {
+  return String(text)
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/[–—]/g, '-')
+    .replace(/→/g, '->')
+    .replace(/←/g, '<-')
+    .replace(/✓/g, 'check')
+    .replace(/⚑/g, 'review')
+    .replace(/°/g, ' degrees')
+    .replace(/\s+/g, ' ')
+    .replace(/[^\x20-\x7E]/g, '')
+    .trim();
+}
+
+function pdfEscape(text) {
+  return text.replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+}
+
+function wrapPdfText(text, maxChars) {
+  const words = normalizePdfText(text).split(' ').filter(Boolean);
+  const lines = [];
+  let line = '';
+  words.forEach(word => {
+    const next = line ? line + ' ' + word : word;
+    if (next.length > maxChars && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = next;
+    }
   });
+  if (line) lines.push(line);
+  return lines;
+}
+
+function buildFlashcardPdf(deck) {
+  const pageW = 612, pageH = 792, margin = 54, lineH = 14;
+  const pages = [];
+  let ops = [];
+  let y = pageH - margin;
+
+  function textLine(text, x, size, font = 'F1') {
+    ops.push(`BT /${font} ${size} Tf ${x} ${y} Td (${pdfEscape(text)}) Tj ET`);
+    y -= lineH;
+  }
+  function newPage() {
+    if (ops.length) pages.push(ops);
+    ops = [];
+    y = pageH - margin;
+  }
+  function ensureRoom(linesNeeded) {
+    if (y - (linesNeeded * lineH) < margin) newPage();
+  }
+
+  textLine('FCLE Flashcards - Quizlet Study Set PDF', margin, 18, 'F2');
+  y -= 8;
+  textLine(`Cards included: ${deck.length}`, margin, 11);
+  y -= 12;
+
+  deck.forEach((card, index) => {
+    const questionLines = wrapPdfText(`${index + 1}. ${card.q}`, 82);
+    const answerLines = wrapPdfText(stripHtml(card.a), 92);
+    ensureRoom(questionLines.length + answerLines.length + 5);
+    textLine(card.catLabel, margin, 10, 'F2');
+    questionLines.forEach(line => textLine(line, margin, 12, 'F2'));
+    answerLines.forEach(line => textLine(line, margin + 16, 10));
+    y -= 12;
+  });
+  if (ops.length) pages.push(ops);
+
+  const objects = [];
+  function addObject(body) {
+    objects.push(body);
+    return objects.length;
+  }
+
+  const fontRegularId = addObject('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
+  const fontBoldId = addObject('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>');
+  const pageIds = [];
+  const pagesId = 3 + pages.length * 2;
+
+  pages.forEach(pageOps => {
+    const stream = pageOps.join('\n');
+    const contentId = addObject(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`);
+    const pageId = addObject(`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 ${pageW} ${pageH}] /Resources << /Font << /F1 ${fontRegularId} 0 R /F2 ${fontBoldId} 0 R >> >> /Contents ${contentId} 0 R >>`);
+    pageIds.push(pageId);
+  });
+
+  const kids = pageIds.map(id => `${id} 0 R`).join(' ');
+  addObject(`<< /Type /Pages /Kids [${kids}] /Count ${pageIds.length} >>`);
+  const catalogId = addObject(`<< /Type /Catalog /Pages ${pagesId} 0 R >>`);
+
+  let pdf = '%PDF-1.4\n';
+  const offsets = [0];
+  objects.forEach((body, i) => {
+    offsets.push(pdf.length);
+    pdf += `${i + 1} 0 obj\n${body}\nendobj\n`;
+  });
+  const xrefAt = pdf.length;
+  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  offsets.slice(1).forEach(offset => {
+    pdf += String(offset).padStart(10, '0') + ' 00000 n \n';
+  });
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root ${catalogId} 0 R >>\nstartxref\n${xrefAt}\n%%EOF`;
+  return pdf;
+}
+
+function exportQuizlet() {
+  const deck = getDeck();
+  const pdf = buildFlashcardPdf(deck);
+  const blob = new Blob([pdf], { type: 'application/pdf' });
   const a = document.createElement('a');
-  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(txt);
-  a.download = 'FCLE_Quizlet.txt';
+  a.href = URL.createObjectURL(blob);
+  a.download = 'FCLE_Quizlet_Study_Set.pdf';
   a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
 // ── THEME ──
@@ -545,8 +815,8 @@ function mk(tag, cls, text) {
 
 // ── INIT ──
 buildFilters();
-renderGrid();
 updateStats();
+showModeChoice();
 </script>
 </body>
 </html>
