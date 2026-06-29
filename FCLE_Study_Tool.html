@@ -34,6 +34,7 @@ nav::-webkit-scrollbar-thumb{background:var(--bd)}
 .ni{display:flex;align-items:center;gap:10px;padding:7px 18px;font-size:13.5px;color:var(--t2);cursor:pointer;transition:.15s;border-left:2px solid transparent}
 .ni:hover{background:var(--s2);color:var(--tx)}
 .ni.on{color:var(--tx);border-left-color:var(--bl);background:rgba(79,142,247,.07);font-weight:600}
+.ni.done::after{content:'✓';margin-left:auto;color:var(--gn);font-weight:800;font-size:12px}
 .ni.hid{display:none}
 .main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
 #welcome{flex:1;padding:28px 32px;display:flex;flex-direction:column;gap:20px;overflow-y:auto}
@@ -48,6 +49,17 @@ nav::-webkit-scrollbar-thumb{background:var(--bd)}
 .tot-btn-primary:hover{opacity:.88}
 .tot-new{font-size:11px;color:var(--t3);background:var(--s2);border:1px solid var(--bd);border-radius:20px;padding:3px 10px;cursor:pointer;font-family:inherit;font-weight:600;transition:.15s;white-space:nowrap}
 .tot-new:hover{color:var(--tx)}
+.study-plan{background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:18px 20px;display:grid;gap:14px}
+.plan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.plan-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--tx)}
+.plan-copy{font-size:13px;color:var(--t2);line-height:1.55;margin-top:3px}
+.mini-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mini-stat{background:var(--s2);border:1px solid var(--bd);border-radius:10px;padding:11px 12px}
+.mini-stat strong{display:block;font-size:20px;color:var(--tx);line-height:1}
+.mini-stat span{display:block;font-size:10px;color:var(--t3);font-weight:800;letter-spacing:.07em;text-transform:uppercase;margin-top:5px}
+.plan-actions{display:flex;gap:8px;flex-wrap:wrap}
+.plan-link{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--bd);background:var(--s2);color:var(--tx);border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;text-decoration:none;transition:.15s}
+.plan-link:hover{border-color:var(--bl);color:var(--bl)}
 .comp-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .comp-card{border-radius:12px;padding:14px 16px;cursor:pointer;transition:.12s;border:1px solid transparent}
 .comp-card:hover{filter:brightness(.97)}
@@ -262,26 +274,45 @@ nav::-webkit-scrollbar-thumb{background:var(--bd)}
         </div>
       </div>
       <!-- Competency Cards -->
+      <div class="study-plan">
+        <div class="plan-head">
+          <div>
+            <div class="plan-title">Your FCLE study path</div>
+            <div class="plan-copy">Open a topic, read the exam tips, then switch to flashcards for active recall.</div>
+          </div>
+        </div>
+        <div class="mini-stats">
+          <div class="mini-stat"><strong id="openedTopics">0</strong><span>Topics opened</span></div>
+          <div class="mini-stat"><strong id="totalTopics">0</strong><span>Total topics</span></div>
+          <div class="mini-stat"><strong id="openedPct">0%</strong><span>Reference pass</span></div>
+        </div>
+        <div class="plan-actions">
+          <a class="plan-link" href="FCLE_Flashcards.html">Open Flashcards</a>
+          <button class="plan-link" onclick="openFinals()">Open Review Guide</button>
+          <button class="plan-link" onclick="resetTopicProgress()">Reset opened topics</button>
+        </div>
+      </div>
+
       <div class="comp-cards">
         <div class="comp-card" style="background:#c0182a12;border-color:#c0182a33" onclick="scrollToComp('c1')">
           <div class="comp-card-label" style="color:#c0182a">Competency 1</div>
           <div class="comp-card-title">Civic Foundations</div>
-          <div class="comp-card-desc">16 topics · Social contract, federalism, rights, elections</div>
+          <div class="comp-card-desc">Core topics · Social contract, federalism, rights, elections</div>
         </div>
         <div class="comp-card" style="background:#1a50c012;border-color:#1a50c033" onclick="scrollToComp('c2')">
           <div class="comp-card-label" style="color:#1a50c0">Competency 2</div>
           <div class="comp-card-title">The Constitution</div>
-          <div class="comp-card-desc">19 topics · Articles, amendments, key clauses</div>
+          <div class="comp-card-desc">Core topics · Articles, amendments, key clauses</div>
         </div>
         <div class="comp-card" style="background:#1a7a4012;border-color:#1a7a4033" onclick="scrollToComp('c3')">
           <div class="comp-card-label" style="color:#1a7a40">Competency 3</div>
           <div class="comp-card-title">Founding Documents</div>
-          <div class="comp-card-desc">13 topics · Declaration, Federalist Papers, Magna Carta</div>
+          <div class="comp-card-desc">Core topics · Declaration, Federalist Papers, Magna Carta</div>
         </div>
         <div class="comp-card" style="background:#b8860b12;border-color:#b8860b33" onclick="scrollToComp('c4')">
           <div class="comp-card-label" style="color:#b8860b">Competency 4</div>
           <div class="comp-card-title">Laws, Treaties &amp; Cases</div>
-          <div class="comp-card-desc">52 topics · Legislation, treaties, court cases</div>
+          <div class="comp-card-desc">Core topics · Legislation, treaties, court cases</div>
         </div>
       </div>
     </div>
@@ -545,7 +576,51 @@ const COMP_DOTS = {1:'d1',2:'d2',3:'d3',4:'d4'};
 // ── TOPIC OF THE DAY ──
 const COMP_COLORS = {1:'#c0182a',2:'#1a50c0',3:'#1a7a40',4:'#b8860b'};
 const COMP_NAMES  = {1:'Civic Foundations',2:'The Constitution',3:'Founding Documents',4:'Laws, Treaties & Cases'};
+const TOPIC_PROGRESS_KEY = 'fcleTopicProgress';
+let topicProgress = loadTopicProgress();
 let totId = null;
+
+function loadTopicProgress() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(TOPIC_PROGRESS_KEY) || '{}');
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveTopicProgress() {
+  localStorage.setItem(TOPIC_PROGRESS_KEY, JSON.stringify(topicProgress));
+}
+
+function updateTopicProgressUI() {
+  const total = Object.keys(T).length;
+  const opened = Object.keys(topicProgress).filter(id => T[id]).length;
+  const pct = total ? Math.round((opened / total) * 100) : 0;
+  const openedEl = document.getElementById('openedTopics');
+  const totalEl = document.getElementById('totalTopics');
+  const pctEl = document.getElementById('openedPct');
+  if (openedEl) openedEl.textContent = opened;
+  if (totalEl) totalEl.textContent = total;
+  if (pctEl) pctEl.textContent = pct + '%';
+  document.querySelectorAll('.ni[data-id]').forEach(el => {
+    el.classList.toggle('done', !!topicProgress[el.dataset.id]);
+  });
+}
+
+function markTopicOpened(id) {
+  if (!T[id]) return;
+  topicProgress[id] = true;
+  saveTopicProgress();
+  updateTopicProgressUI();
+}
+
+function resetTopicProgress() {
+  if (!confirm('Reset opened-topic progress on this device?')) return;
+  topicProgress = {};
+  saveTopicProgress();
+  updateTopicProgressUI();
+}
 
 function pickTotopic(id) {
   const keys = Object.keys(T);
@@ -704,6 +779,7 @@ let activeTab = {};
 function showTopic(id) {
   const t = T[id];
   if (!t) return;
+  markTopicOpened(id);
 
   // Set header
   document.getElementById('tdot').className = 'dot ' + COMP_DOTS[t.c];
@@ -840,6 +916,14 @@ function toggleTheme() { applyTheme(document.documentElement.getAttribute('data-
 buildNav();
 buildFinals();
 pickTotopic();
+updateTopicProgressUI();
+if (location.hash === '#review-guide') {
+  openFinals();
+} else if (/^#c[1-4]$/.test(location.hash)) {
+  scrollToComp(location.hash.slice(1));
+} else if (T[location.hash.slice(1)]) {
+  showTopic(location.hash.slice(1));
+}
 </script>
 </body>
 </html>

@@ -4,105 +4,193 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FCLE Study Hub</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#f2efe8;--sf:#e8e4da;--s2:#ddd8cc;--bd:#c8c0b0;--tx:#18140c;--t2:#4a4538;--t3:#8a8070;--ac:#1a50c0;--tl:#1a7060;--am:#a06810}
-[data-theme="dark"]{--bg:#0f1117;--sf:#181c27;--s2:#1e2336;--bd:#2a3050;--tx:#e8eaf2;--t2:#8b92b8;--t3:#555e85;--ac:#4f8ef7;--tl:#38b890;--am:#e8a838}
-body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px}
-.hub{width:100%;max-width:480px;display:flex;flex-direction:column;gap:0}
-.header{text-align:center;padding-bottom:32px}
-.badge{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ac);margin-bottom:14px}
-h1{font-family:'Playfair Display',serif;font-size:clamp(36px,8vw,52px);font-weight:900;line-height:1.1;color:var(--tx);margin-bottom:12px}
-h1 em{font-style:normal;color:var(--tx)}
-.subtitle{color:var(--t2);font-size:15px;line-height:1.6}
-.divider{display:flex;align-items:center;gap:12px;margin-bottom:20px}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--bd)}
-.divider span{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);white-space:nowrap}
-.cards{display:flex;flex-direction:column;gap:12px;margin-bottom:32px}
-.card{display:flex;align-items:center;gap:16px;background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:20px 22px;text-decoration:none;color:inherit;transition:transform .2s,box-shadow .2s,border-color .2s}
-.card:hover{transform:translateY(-2px)}
-.card.blue:hover{border-color:var(--ac);box-shadow:0 6px 24px rgba(26,80,192,.12)}
-.card.teal:hover{border-color:var(--tl);box-shadow:0 6px 24px rgba(26,112,96,.12)}
-.icon-wrap{width:48px;height:48px;border-radius:12px;background:var(--s2);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.card-text{flex:1}
-.card-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
-.card.blue .card-label{color:var(--ac)}
-.card.teal .card-label{color:var(--tl)}
-.card-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:4px}
-.card-desc{font-size:13px;color:var(--t2);line-height:1.5}
-.arrow{font-size:20px;color:var(--t3);transition:transform .2s,color .2s;flex-shrink:0}
-.card:hover .arrow{transform:translate(3px,-3px)}
-.card.blue:hover .arrow{color:var(--ac)}
-.card.teal:hover .arrow{color:var(--tl)}
-.footer{text-align:center;font-size:12px;color:var(--t3);line-height:1.9;padding-top:8px;border-top:1px solid var(--bd)}
-.footer strong{color:var(--t2);font-weight:600}
-.footer .tag{display:block;font-style:normal;color:var(--tx);font-size:13px;margin-top:4px}
-.theme-btn{position:fixed;top:18px;right:18px;width:36px;height:36px;border-radius:50%;border:1px solid var(--bd);background:var(--sf);color:var(--tx);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .2s}
-.theme-btn:hover{border-color:var(--ac)}
-.feedback-btn{display:inline-block;margin-top:12px;padding:8px 18px;border-radius:8px;border:1px solid var(--bd);background:var(--s2);color:var(--t2);font-size:12px;font-weight:600;text-decoration:none;transition:.2s}
-.feedback-btn:hover{border-color:var(--ac);color:var(--ac)}
-@media(max-width:400px){.card{padding:16px;gap:13px}.icon-wrap{width:42px;height:42px;font-size:20px}.card-title{font-size:18px}}
+:root{--bg:#f4f0e8;--surface:#ebe5d8;--surface2:#ded7c9;--border:#c7bda9;--text:#17140e;--text2:#474035;--text3:#7d7364;--blue:#1a50c0;--red:#b8202f;--green:#19764f;--amber:#a46a12;--shadow:0 18px 45px rgba(55,42,25,.12)}
+[data-theme="dark"]{--bg:#0e1119;--surface:#171d2a;--surface2:#20283a;--border:#2d3852;--text:#edf1f7;--text2:#a8b3c8;--text3:#6f7a94;--blue:#5d96f7;--red:#ef6670;--green:#40bd87;--amber:#ecb04d;--shadow:0 18px 50px rgba(0,0,0,.35)}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{text-decoration:none;color:inherit}
+button{font:inherit}
+.page{width:min(1120px,100%);margin:0 auto;padding:22px 20px 48px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:28px}
+.brand{display:flex;align-items:center;gap:12px}
+.seal{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--green));color:#fff;display:grid;place-items:center;font-weight:900;letter-spacing:.04em;box-shadow:var(--shadow)}
+.kicker{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text3)}
+.brand-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;line-height:1}
+.theme-btn{border:1px solid var(--border);background:var(--surface);color:var(--text2);border-radius:9px;padding:8px 12px;font-weight:700;cursor:pointer}
+.theme-btn:hover{border-color:var(--blue);color:var(--blue)}
+.hero{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:18px;align-items:stretch;margin-bottom:18px}
+.hero-main,.panel,.tool-card,.competency{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow)}
+.hero-main{padding:30px}
+h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,62px);font-weight:900;line-height:.98;margin-bottom:14px;max-width:760px}
+.lead{font-size:16px;color:var(--text2);line-height:1.65;max-width:720px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.primary,.secondary{display:inline-flex;align-items:center;justify-content:center;border-radius:9px;padding:10px 15px;font-size:14px;font-weight:800;border:1px solid var(--border)}
+.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.secondary{background:var(--surface2);color:var(--text)}
+.secondary:hover{border-color:var(--blue);color:var(--blue)}
+.panel{padding:20px}
+.panel-title{font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:12px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px}
+.stat strong{display:block;font-size:28px;line-height:1;color:var(--text)}
+.stat span{display:block;margin-top:5px;font-size:11px;color:var(--text3);font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.sprint{margin-top:14px;border-top:1px solid var(--border);padding-top:14px;color:var(--text2);font-size:14px;line-height:1.55}
+.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+.tool-card{padding:18px;display:flex;flex-direction:column;gap:10px;min-height:190px;transition:transform .15s,border-color .15s}
+.tool-card:hover{transform:translateY(-2px);border-color:var(--blue)}
+.tool-label{font-size:10px;font-weight:900;letter-spacing:.11em;text-transform:uppercase}
+.tool-card:nth-child(1) .tool-label{color:var(--blue)}
+.tool-card:nth-child(2) .tool-label{color:var(--green)}
+.tool-card:nth-child(3) .tool-label{color:var(--amber)}
+.tool-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:800}
+.tool-copy{font-size:14px;color:var(--text2);line-height:1.55;flex:1}
+.tool-meta{font-size:12px;color:var(--text3);font-weight:800}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:24px 0 10px}
+.section-head h2{font-family:'Playfair Display',serif;font-size:26px}
+.section-head p{color:var(--text3);font-size:13px}
+.competencies{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.competency{padding:15px;min-height:132px}
+.comp-num{font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.competency:nth-child(1) .comp-num{color:var(--red)}
+.competency:nth-child(2) .comp-num{color:var(--blue)}
+.competency:nth-child(3) .comp-num{color:var(--green)}
+.competency:nth-child(4) .comp-num{color:var(--amber)}
+.comp-title{font-weight:900;margin-bottom:5px}
+.comp-copy{font-size:13px;color:var(--text2);line-height:1.45}
+.footer{margin-top:24px;padding-top:16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--text3);font-size:12px;flex-wrap:wrap}
+.feedback{color:var(--text2);font-weight:800}
+.feedback:hover{color:var(--blue)}
+@media(max-width:860px){.hero{grid-template-columns:1fr}.tools,.competencies{grid-template-columns:1fr 1fr}.hero-main{padding:24px}}
+@media(max-width:560px){.page{padding:16px 14px 36px}.top{align-items:flex-start}.tools,.competencies,.stats{grid-template-columns:1fr}.brand-title{font-size:21px}h1{font-size:38px}.hero-actions a{width:100%}.section-head{display:block}.section-head p{margin-top:4px}}
 </style>
 </head>
 <body>
-
-<button class="theme-btn" id="thbtn" onclick="toggleTheme()">🌙</button>
-
-<div class="hub">
-
-  <div class="header">
-    <h1>FCLE Study Hub</h1>
-
-  </div>
-
-  <div class="divider"><span>Choose a tool</span></div>
-
-  <div class="cards">
-
-    <a class="card blue" href="FCLE_Study_Tool.html">
-      <div class="icon-wrap">📖</div>
-      <div class="card-text">
-        <div class="card-label">Reference</div>
-        <div class="card-title">Study Tool</div>
-        <div class="card-desc">100+ topics across 4 competencies · Overview, history, cases &amp; exam tips · Finals Guide</div>
+<div class="page">
+  <header class="top">
+    <div class="brand">
+      <div class="seal">FCLE</div>
+      <div>
+        <div class="kicker">Florida Civic Literacy Exam</div>
+        <div class="brand-title">Study Hub</div>
       </div>
-      <span class="arrow">→</span>
-    </a>
+    </div>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">Dark</button>
+  </header>
 
-    <a class="card teal" href="FCLE_Flashcards.html">
-      <div class="icon-wrap">🗂️</div>
-      <div class="card-text">
-        <div class="card-label">Practice</div>
-        <div class="card-title">Flashcards</div>
-        <div class="card-desc">99 cards · Study mode · Filter by competency · Flag for review · Anki export</div>
+  <main>
+    <section class="hero">
+      <div class="hero-main">
+        <h1>Pass-ready civics review, built for repeat study.</h1>
+        <p class="lead">Use the reference tool for context, the review guide for final-pass questions, and flashcards for active recall across civic foundations, the Constitution, founding documents, laws, treaties, and landmark cases.</p>
+        <div class="hero-actions">
+          <a class="primary" href="FCLE_Study_Tool.html">Start Study Tool</a>
+          <a class="secondary" href="FCLE_Flashcards.html">Review Flashcards</a>
+          <a class="secondary" href="FCLE_Study_Tool.html#review-guide">Open Review Guide</a>
+        </div>
       </div>
-      <span class="arrow">→</span>
-    </a>
 
+      <aside class="panel">
+        <div class="panel-title">Saved on this device</div>
+        <div class="stats">
+          <div class="stat"><strong id="topicsOpened">0</strong><span>Topics opened</span></div>
+          <div class="stat"><strong>97</strong><span>Reference topics</span></div>
+          <div class="stat"><strong id="cardsMarked">0</strong><span>Cards marked</span></div>
+          <div class="stat"><strong id="cardsReview">0</strong><span>Need review</span></div>
+        </div>
+        <p class="sprint">Next sprint: open one weak competency, read the exam tips, then mark ten flashcards as Got it, Almost, or Review.</p>
+      </aside>
+    </section>
 
+    <section class="tools" aria-label="Study tools">
+      <a class="tool-card" href="FCLE_Study_Tool.html">
+        <div class="tool-label">Reference</div>
+        <div class="tool-title">Study Tool</div>
+        <p class="tool-copy">A searchable topic library with summaries, history, court cases, laws, and exam tips.</p>
+        <div class="tool-meta">97 topics · 4 competencies</div>
+      </a>
+      <a class="tool-card" href="FCLE_Flashcards.html">
+        <div class="tool-label">Practice</div>
+        <div class="tool-title">Flashcards</div>
+        <p class="tool-copy">Active recall mode with filters, shuffle, keyboard navigation, and saved marks.</p>
+        <div class="tool-meta">99 cards · Anki and Quizlet export</div>
+      </a>
+      <a class="tool-card" href="FCLE_Study_Tool.html#review-guide">
+        <div class="tool-label">Final pass</div>
+        <div class="tool-title">Review Guide</div>
+        <p class="tool-copy">High-yield prompts organized by competency for the last review before exam day.</p>
+        <div class="tool-meta">Question sets · Competency tabs</div>
+      </a>
+    </section>
 
-  </div>
+    <section>
+      <div class="section-head">
+        <h2>Competency Map</h2>
+        <p>Balanced coverage beats cramming one section.</p>
+      </div>
+      <div class="competencies">
+        <a class="competency" href="FCLE_Study_Tool.html#c1">
+          <div class="comp-num">Competency 1</div>
+          <div class="comp-title">Civic Foundations</div>
+          <p class="comp-copy">Social contract, rights, federalism, rule of law, elections.</p>
+        </a>
+        <a class="competency" href="FCLE_Study_Tool.html#c2">
+          <div class="comp-num">Competency 2</div>
+          <div class="comp-title">The Constitution</div>
+          <p class="comp-copy">Articles, amendments, clauses, separation of powers.</p>
+        </a>
+        <a class="competency" href="FCLE_Study_Tool.html#c3">
+          <div class="comp-num">Competency 3</div>
+          <div class="comp-title">Founding Documents</div>
+          <p class="comp-copy">Declaration, Federalist Papers, Articles, Magna Carta.</p>
+        </a>
+        <a class="competency" href="FCLE_Study_Tool.html#c4">
+          <div class="comp-num">Competency 4</div>
+          <div class="comp-title">Laws, Treaties & Cases</div>
+          <p class="comp-copy">Civil rights, treaties, landmark Supreme Court cases.</p>
+        </a>
+      </div>
+    </section>
+  </main>
 
-  <div class="footer">
-    <strong>FCLE Study Hub</strong><br>
-    Built to help every student pass the Florida Civic Literacy Exam<br>
-    <span class="tag">Happy studying! — Sleepy Ius</span>
-    <a class="feedback-btn" href="mailto:abrahab@phsc.edu?subject=Recommendations%20for%20the%20FCLE%20Study%20Hub">✉ Help us improve the hub</a>
-  </div>
-
+  <footer class="footer">
+    <span>FCLE Study Hub · local progress only</span>
+    <a class="feedback" href="mailto:abrahab@phsc.edu?subject=Recommendations%20for%20the%20FCLE%20Study%20Hub">Help improve the hub</a>
+  </footer>
 </div>
 
 <script>
-var btn = document.getElementById('thbtn');
-function applyTheme(dark) {
-  document.documentElement[dark?'setAttribute':'removeAttribute']('data-theme','dark');
-  btn.textContent = dark ? '☀️' : '🌙';
-  localStorage.setItem('fcleHubTheme', dark ? 'dark' : 'light');
+function readJson(key) {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(key) || '{}');
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch (e) {
+    return {};
+  }
 }
-function toggleTheme() { applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark'); }
-(function(){ applyTheme(localStorage.getItem('fcleHubTheme') === 'dark'); })();
-</script>
 
+function updateDashboard() {
+  const topics = readJson('fcleTopicProgress');
+  const cards = readJson('fcleFlashStatus');
+  const cardValues = Object.values(cards);
+  document.getElementById('topicsOpened').textContent = Object.keys(topics).length;
+  document.getElementById('cardsMarked').textContent = cardValues.filter(Boolean).length;
+  document.getElementById('cardsReview').textContent = cardValues.filter(v => v === 'review').length;
+}
+
+function applyTheme(dark) {
+  document.documentElement[dark ? 'setAttribute' : 'removeAttribute']('data-theme','dark');
+  document.getElementById('themeBtn').textContent = dark ? 'Light' : 'Dark';
+  localStorage.setItem('fcleTheme', dark ? 'dark' : 'light');
+}
+
+function toggleTheme() {
+  applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark');
+}
+
+applyTheme(localStorage.getItem('fcleTheme') === 'dark');
+updateDashboard();
+</script>
 </body>
 </html>

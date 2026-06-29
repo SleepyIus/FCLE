@@ -49,6 +49,9 @@ a.back:hover{color:var(--accent)}
 .stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 14px;text-align:center}
 .stat-l{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
 .stat-v{font-size:22px;font-weight:700;margin-top:2px;color:var(--text)}
+.progress-note{margin:-8px 0 18px;color:var(--text3);font-size:12px;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.reset-btn{border:1px solid var(--border);background:var(--surface2);color:var(--text2);border-radius:999px;padding:5px 11px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.reset-btn:hover{border-color:var(--red);color:var(--red)}
 /* ── GRID VIEW ── */
 #gridView{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
 .fc{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s;display:flex;flex-direction:column;min-height:220px;position:relative}
@@ -124,6 +127,10 @@ a.back:hover{color:var(--accent)}
     <div class="stat"><div class="stat-l">⚑ Review</div><div class="stat-v" id="sReview" style="color:var(--red)">0</div></div>
     <div class="stat"><div class="stat-l">~ Almost</div><div class="stat-v" id="sAlmost" style="color:var(--amber)">0</div></div>
   </div>
+  <div class="progress-note">
+    <span id="progressNote">Progress is saved on this device.</span>
+    <button class="reset-btn" onclick="resetProgress()">Reset card marks</button>
+  </div>
   <div id="gridView"></div>
   <div id="studyView">
     <div class="study-wrap">
@@ -143,7 +150,7 @@ a.back:hover{color:var(--accent)}
       </div>
       <div class="study-actions" id="studyActions">
         <div class="study-btns">
-          <button class="study-btn got" onclick="markCard('')">✓ Got it<span class="kbd">[1]</span></button>
+          <button class="study-btn got" onclick="markCard('mastered')">✓ Got it<span class="kbd">[1]</span></button>
           <button class="study-btn al" onclick="markCard('maybe')">~ Almost<span class="kbd">[2]</span></button>
           <button class="study-btn rv" onclick="markCard('review')">⚑ Review<span class="kbd">[3]</span></button>
         </div>
@@ -259,8 +266,22 @@ const CARDS = [
   {"cat": "cases", "catLabel": "Court Cases", "q": "Shaw v. Reno (1993) — what did it limit?", "a": "<ul><li>Race cannot be the <strong>predominant factor</strong> in drawing congressional district lines</li><li>North Carolina's bizarrely shaped majority-Black district triggered <strong>strict scrutiny</strong> under Equal Protection</li><li>States can create majority-minority districts but cannot be blatantly race-driven in shape</li><li>Key tension: Voting Rights Act (sometimes requires majority-minority districts) vs. Equal Protection</li></ul>"},];
 
 // ── STATE ──
-const status = {}; // '' | 'review' | 'maybe'
+const STATUS_KEY = 'fcleFlashStatus';
+let status = loadStatus(); // '' | 'review' | 'maybe' | 'mastered'
 let curCat = 'all', curStatus = '', isStudy = false, studyDeck = [], studyIdx = 0, studyFlipped = false, isShuffled = false;
+
+function loadStatus() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(STATUS_KEY) || '{}');
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveStatus() {
+  localStorage.setItem(STATUS_KEY, JSON.stringify(status));
+}
 
 function shuffleArr(arr) {
   const a = [...arr];
@@ -339,10 +360,14 @@ function getDeck() {
 // ── STATS ──
 function updateStats() {
   const deck = getDeck();
+  const marked = CARDS.filter(c => status[c.q]).length;
+  const mastered = CARDS.filter(c => status[c.q] === 'mastered').length;
   document.getElementById('sTotal').textContent = CARDS.length;
   document.getElementById('sShowing').textContent = deck.length;
   document.getElementById('sReview').textContent = CARDS.filter(c => status[c.q] === 'review').length;
   document.getElementById('sAlmost').textContent = CARDS.filter(c => status[c.q] === 'maybe').length;
+  document.getElementById('progressNote').textContent =
+    `${marked} card${marked===1?'':'s'} marked on this device · ${mastered} mastered`;
 }
 
 // ── GRID VIEW ──
@@ -408,9 +433,20 @@ function studyNav(dir) {
 function markCard(st) {
   if (!studyDeck.length) return;
   const card = studyDeck[studyIdx];
-  status[card.q] = st;
+  if (st) status[card.q] = st;
+  else delete status[card.q];
+  saveStatus();
   updateStats();
   studyNav(1);
+}
+
+function resetProgress() {
+  if (!confirm('Reset all flashcard marks on this device?')) return;
+  status = {};
+  saveStatus();
+  if (isStudy) { buildStudyDeck(); renderStudy(); }
+  else renderGrid();
+  updateStats();
 }
 
 // ── TOGGLE MODE ──
@@ -476,10 +512,10 @@ const thBtn = document.getElementById('themeBtn');
 function applyTheme(dark) {
   document.documentElement[dark?'setAttribute':'removeAttribute']('data-theme','dark');
   thBtn.textContent = dark ? '☀️ Light' : '🌙 Dark';
-  localStorage.setItem('fcleFlashTheme', dark ? 'dark' : 'light');
+  localStorage.setItem('fcleTheme', dark ? 'dark' : 'light');
 }
 function toggleTheme() { applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark'); }
-(function(){ applyTheme(localStorage.getItem('fcleFlashTheme') === 'dark'); })();
+(function(){ applyTheme(localStorage.getItem('fcleTheme') === 'dark'); })();
 
 // Topbar scroll fade
 function updateTopbarFade() {
