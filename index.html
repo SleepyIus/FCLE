@@ -32,13 +32,14 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,62px);font-weig
 .stat strong{display:block;font-size:28px;line-height:1;color:var(--text)}
 .stat span{display:block;margin-top:5px;font-size:11px;color:var(--text3);font-weight:800;text-transform:uppercase;letter-spacing:.06em}
 .sprint{margin-top:14px;border-top:1px solid var(--border);padding-top:14px;color:var(--text2);font-size:14px;line-height:1.55}
-.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+.tools{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}
 .tool-card{padding:18px;display:flex;flex-direction:column;gap:10px;min-height:190px;transition:transform .15s,border-color .15s}
 .tool-card:hover{transform:translateY(-2px);border-color:var(--blue)}
 .tool-label{font-size:10px;font-weight:900;letter-spacing:.11em;text-transform:uppercase}
 .tool-card:nth-child(1) .tool-label{color:var(--blue)}
 .tool-card:nth-child(2) .tool-label{color:var(--green)}
 .tool-card:nth-child(3) .tool-label{color:var(--amber)}
+.tool-card:nth-child(4) .tool-label{color:var(--red)}
 .tool-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:800}
 .tool-copy{font-size:14px;color:var(--text2);line-height:1.55;flex:1}
 .tool-meta{font-size:12px;color:var(--text3);font-weight:800}
@@ -81,7 +82,7 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,62px);font-weig
     <section class="hero">
       <div class="hero-main">
         <h1>Focused civics review, built for repeat study.</h1>
-        <p class="lead">Use the reference tool for context, the review guide for check-in questions, and flashcards for active recall across civic foundations, the Constitution, founding documents, laws, treaties, and landmark cases.</p>
+        <p class="lead">Use the reference tool for context, the timeline for sequence, the review guide for check-in questions, and flashcards for active recall across civic foundations, the Constitution, founding documents, laws, treaties, and landmark cases.</p>
       </div>
 
       <aside class="panel">
@@ -107,7 +108,13 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,62px);font-weig
         <div class="tool-label">Practice</div>
         <div class="tool-title">Flashcards</div>
         <p class="tool-copy">Active recall mode with filters, shuffle, keyboard navigation, and saved marks.</p>
-        <div class="tool-meta">99 cards · Anki and Quizlet export</div>
+        <div class="tool-meta">469 atomic cards · Anki and PDF export</div>
+      </a>
+      <a class="tool-card" href="FCLE_Timeline.html">
+        <div class="tool-label">Sequence</div>
+        <div class="tool-title">Timeline</div>
+        <p class="tool-copy">Interactive dates for founding documents, amendments, laws, treaties, and landmark cases.</p>
+        <div class="tool-meta">Filter · Search · Event details</div>
       </a>
       <a class="tool-card" href="FCLE_Study_Tool.html#review-guide">
         <div class="tool-label">Review</div>
@@ -122,7 +129,7 @@ h1{font-family:'Playfair Display',serif;font-size:clamp(36px,6vw,62px);font-weig
         <div class="feedback-title">Help improve the hub</div>
         <p class="feedback-copy">Spotted a confusing topic, missing case, typo, or feature idea? Send it in so the FCLE tool can keep getting sharper.</p>
       </div>
-      <a class="feedback-action" href="mailto:abrahab@phsc.edu?subject=Recommendations%20for%20the%20FCLE%20Study%20Hub&body=Hello%2C%0A%0AThank%20you%20for%20taking%20a%20moment%20to%20help%20improve%20the%20FCLE%20Study%20Hub.%20Please%20fill%20out%20any%20sections%20that%20apply.%0A%0AWhich%20class%20did%20you%20take%3F%20Type%201%20for%20American%20Federal%20Government%20or%202%20for%20American%20History.%0A%5BType%201%20or%202%20here%5D%0A%0AWhich%20section%20were%20you%20using%3F%0A%5BStudy%20Tool%20%2F%20Flashcards%20%2F%20Review%20Guide%20%2F%20Not%20sure%5D%0A%0AWhat%20did%20you%20like%3F%0A%5BType%20here%5D%0A%0AWhat%20did%20you%20not%20like%20or%20find%20frustrating%3F%0A%5BType%20here%5D%0A%0AWhat%20could%20we%20improve%3F%0A%5BType%20here%5D%0A%0AWhat%20content%2C%20examples%2C%20or%20features%20should%20we%20add%3F%0A%5BType%20here%5D%0A%0AOther%20comment(s)%20%2F%20recommendation(s)%3A%0A%5BType%20here%5D%0A%0AOptional%20name%20or%20section%3A%0A%5BType%20here%5D%0A">Send feedback</a>
+      <a class="feedback-action" href="mailto:abrahab@phsc.edu?subject=Recommendations%20for%20the%20FCLE%20Study%20Hub&body=Hello%2C%0A%0AThank%20you%20for%20taking%20a%20moment%20to%20help%20improve%20the%20FCLE%20Study%20Hub.%20Please%20fill%20out%20any%20sections%20that%20apply.%0A%0AWhich%20class%20did%20you%20take%3F%20Type%201%20for%20American%20Federal%20Government%20or%202%20for%20American%20History.%0A%5BType%201%20or%202%20here%5D%0A%0AWhich%20section%20were%20you%20using%3F%0A%5BStudy%20Tool%20%2F%20Flashcards%20%2F%20Timeline%20%2F%20Review%20Guide%20%2F%20Not%20sure%5D%0A%0AWhat%20did%20you%20like%3F%0A%5BType%20here%5D%0A%0AWhat%20did%20you%20not%20like%20or%20find%20frustrating%3F%0A%5BType%20here%5D%0A%0AWhat%20could%20we%20improve%3F%0A%5BType%20here%5D%0A%0AWhat%20content%2C%20examples%2C%20or%20features%20should%20we%20add%3F%0A%5BType%20here%5D%0A%0AOther%20comment(s)%20%2F%20recommendation(s)%3A%0A%5BType%20here%5D%0A%0AOptional%20name%20or%20section%3A%0A%5BType%20here%5D%0A">Send feedback</a>
     </section>
 
     <section>

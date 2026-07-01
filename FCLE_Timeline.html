@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Timeline - Florida Civic Literacy</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f4f0e8;--surface:#ebe5d8;--surface2:#ded7c9;--border:#c7bda9;--text:#17140e;--text2:#474035;--text3:#7d7364;--blue:#1a50c0;--red:#b8202f;--green:#19764f;--amber:#a46a12;--purple:#6d4aa8;--shadow:0 18px 45px rgba(55,42,25,.12)}
+[data-theme="dark"]{--bg:#0e1119;--surface:#171d2a;--surface2:#20283a;--border:#2d3852;--text:#edf1f7;--text2:#a8b3c8;--text3:#6f7a94;--blue:#5d96f7;--red:#ef6670;--green:#40bd87;--amber:#ecb04d;--purple:#b79aff;--shadow:0 18px 50px rgba(0,0,0,.35)}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{text-decoration:none;color:inherit}
+button,input{font:inherit}
+.topbar{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);height:54px;display:flex;align-items:center;gap:12px;padding:0 20px}
+.back{font-size:13px;color:var(--text3);font-weight:700}
+.back:hover{color:var(--blue)}
+.title{font-family:'Playfair Display',serif;font-size:18px;font-weight:900;flex:1}
+.theme-btn{border:1px solid var(--border);background:var(--surface2);color:var(--text2);border-radius:9px;padding:7px 11px;font-size:12px;font-weight:800;cursor:pointer}
+.page{width:min(1180px,100%);margin:0 auto;padding:24px 20px 56px}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;margin-bottom:16px}
+.hero-main,.stat,.controls,.detail,.event{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow)}
+.hero-main{padding:26px}
+.kicker{font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+h1{font-family:'Playfair Display',serif;font-size:clamp(34px,5vw,56px);line-height:.98;margin-bottom:10px}
+.lead{color:var(--text2);font-size:15px;line-height:1.6;max-width:760px}
+.stat{padding:18px;display:grid;align-content:center}
+.stat strong{font-size:44px;line-height:1;font-family:'Playfair Display',serif}
+.stat span{font-size:11px;color:var(--text3);font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-top:7px}
+.controls{padding:14px;margin-bottom:16px}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chip{border:1px solid var(--border);background:var(--surface2);color:var(--text2);border-radius:999px;padding:7px 12px;font-size:12px;font-weight:800;cursor:pointer}
+.chip:hover{border-color:var(--blue);color:var(--blue)}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.search{margin-left:auto;min-width:220px;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:9px;padding:8px 10px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;align-items:start}
+.timeline{position:relative;display:flex;flex-direction:column;gap:10px;padding-left:26px}
+.timeline::before{content:"";position:absolute;left:8px;top:8px;bottom:8px;width:2px;background:var(--border)}
+.event{position:relative;display:grid;grid-template-columns:92px 1fr;gap:12px;padding:14px;cursor:pointer;transition:transform .15s,border-color .15s;color:var(--text);text-align:left}
+.event:hover{transform:translateY(-2px);border-color:var(--blue)}
+.event.active{border-color:var(--blue);box-shadow:0 0 0 2px rgba(26,80,192,.12),var(--shadow)}
+.event::before{content:"";position:absolute;left:-23px;top:22px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:3px solid var(--blue)}
+.year{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;line-height:1;color:var(--text)}
+.tag{display:inline-flex;width:max-content;border-radius:999px;padding:3px 8px;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-top:8px;background:var(--surface2);color:var(--text3)}
+.event-title{font-weight:900;font-size:17px;margin-bottom:4px}
+.event-copy{color:var(--text2);font-size:13.5px;line-height:1.5}
+.detail{position:sticky;top:72px;padding:18px}
+.detail-cat{font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);margin-bottom:8px}
+.detail h2{font-family:'Playfair Display',serif;font-size:30px;line-height:1;margin-bottom:10px}
+.detail-year{font-size:13px;color:var(--text3);font-weight:900;margin-bottom:12px}
+.detail p{color:var(--text2);line-height:1.6;font-size:14px;margin-bottom:12px}
+.detail-box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text2);font-size:13.5px;line-height:1.5}
+.detail-box strong{display:block;color:var(--text);margin-bottom:4px}
+.empty{background:var(--surface);border:1px dashed var(--border);border-radius:12px;padding:38px;text-align:center;color:var(--text3);font-weight:700}
+.cat-founding::before{border-color:var(--green)}.cat-founding .tag,.detail[data-cat="founding"] .detail-cat{color:var(--green)}
+.cat-constitution::before{border-color:var(--blue)}.cat-constitution .tag,.detail[data-cat="constitution"] .detail-cat{color:var(--blue)}
+.cat-rights::before{border-color:var(--red)}.cat-rights .tag,.detail[data-cat="rights"] .detail-cat{color:var(--red)}
+.cat-law::before{border-color:var(--amber)}.cat-law .tag,.detail[data-cat="law"] .detail-cat{color:var(--amber)}
+.cat-case::before{border-color:var(--purple)}.cat-case .tag,.detail[data-cat="case"] .detail-cat{color:var(--purple)}
+.cat-treaty::before{border-color:var(--text3)}.cat-treaty .tag,.detail[data-cat="treaty"] .detail-cat{color:var(--text3)}
+@media(max-width:860px){.hero,.layout{grid-template-columns:1fr}.detail{position:static}.search{width:100%;margin-left:0}.event{grid-template-columns:78px 1fr}}
+@media(max-width:560px){.page{padding:18px 14px 42px}.topbar{padding:0 14px}.event{grid-template-columns:1fr}.year{font-size:22px}.timeline{padding-left:20px}.event::before{left:-19px}.hero-main{padding:22px}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="back" href="index.html">Back to Hub</a>
+  <div class="title">FCLE Timeline</div>
+  <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">Dark</button>
+</div>
+
+<main class="page">
+  <section class="hero">
+    <div class="hero-main">
+      <div class="kicker">Events, documents, laws, and cases</div>
+      <h1>Interactive FCLE timeline</h1>
+      <p class="lead">Move through the major dates that connect founding documents, constitutional change, civil rights, federal power, treaties, and landmark Supreme Court cases.</p>
+    </div>
+    <aside class="stat">
+      <strong id="eventCount">0</strong>
+      <span>Events showing</span>
+    </aside>
+  </section>
+
+  <section class="controls">
+    <div class="filter-row" id="filters"></div>
+  </section>
+
+  <section class="layout">
+    <div class="timeline" id="timeline"></div>
+    <aside class="detail" id="detail" data-cat="founding"></aside>
+  </section>
+</main>
+
+<script>
+const EVENTS = [
+  {year:1215, cat:'founding', title:'Magna Carta', why:'Limited royal power and helped shape rule of law, due process, trial by jury, and property protections.', hook:'Earliest major rule-of-law influence on American constitutional thinking.'},
+  {year:1620, cat:'founding', title:'Mayflower Compact', why:'Created self-government by consent among the Plymouth settlers.', hook:'Early American example of social contract and consent of the governed.'},
+  {year:1689, cat:'rights', title:'English Bill of Rights', why:'Limited monarchy and protected rights such as petition, arms, jury trial, and freedom from cruel punishment.', hook:'Direct influence on the U.S. Bill of Rights.'},
+  {year:1776, cat:'founding', title:'Common Sense', why:'Thomas Paine argued plainly and forcefully for independence from Britain.', hook:'Helped move public opinion toward independence.'},
+  {year:1776, cat:'rights', title:'Virginia Declaration of Rights', why:'George Mason declared natural rights and limits on government power.', hook:'Influenced the Declaration of Independence and the Bill of Rights.'},
+  {year:1776, cat:'founding', title:'Declaration of Independence', why:'Announced independence and grounded government in natural rights and consent of the governed.', hook:'Jefferson changed Locke\'s property language to pursuit of happiness.'},
+  {year:1781, cat:'constitution', title:'Articles of Confederation', why:'The first U.S. governing document created a weak national government.', hook:'No federal taxing power, no executive, no national judiciary, and no commerce regulation.'},
+  {year:1783, cat:'treaty', title:'Treaty of Paris', why:'Ended the American Revolution and recognized U.S. independence.', hook:'Set U.S. territory from the Atlantic to the Mississippi River.'},
+  {year:1787, cat:'law', title:'Northwest Ordinance', why:'Organized the Northwest Territory and created a path to statehood.', hook:'Prohibited slavery in the Northwest Territory.'},
+  {year:1787, cat:'constitution', title:'U.S. Constitution drafted', why:'Replaced the Articles with a stronger federal system based on separation of powers and checks and balances.', hook:'Signed September 17, 1787; took effect March 4, 1789.'},
+  {year:1787, cat:'constitution', title:'Federalist Papers begin', why:'Hamilton, Madison, and Jay argued for ratification under the name Publius.', hook:'Know No. 10 factions, No. 51 checks and balances, No. 78 judiciary.'},
+  {year:1791, cat:'rights', title:'Bill of Rights ratified', why:'The first ten amendments protected civil liberties and answered Anti-Federalist concerns.', hook:'Originally limited the federal government; most rights later applied to states.'},
+  {year:1798, cat:'law', title:'Alien and Sedition Acts', why:'Expanded deportation authority and criminalized criticism of government.', hook:'Important First Amendment tension under President John Adams.'},
+  {year:1803, cat:'case', title:'Marbury v. Madison', why:'Chief Justice John Marshall established judicial review.', hook:'Courts can declare laws or actions unconstitutional.'},
+  {year:1803, cat:'treaty', title:'Louisiana Purchase', why:'The U.S. purchased a vast territory from France for $15 million.', hook:'Roughly doubled the size of the United States.'},
+  {year:1819, cat:'case', title:'McCulloch v. Maryland', why:'Upheld implied powers and blocked states from taxing federal institutions.', hook:'Necessary and Proper Clause plus federal supremacy.'},
+  {year:1820, cat:'law', title:'Missouri Compromise', why:'Balanced Missouri as slave state and Maine as free state.', hook:'Restricted slavery north of 36 degrees 30 minutes until later undone.'},
+  {year:1824, cat:'case', title:'Gibbons v. Ogden', why:'Confirmed broad federal power over interstate commerce.', hook:'Commerce Clause beats conflicting state monopoly.'},
+  {year:1850, cat:'law', title:'Compromise of 1850', why:'Admitted California as free and strengthened fugitive slave enforcement.', hook:'Included the Fugitive Slave Act and heightened sectional conflict.'},
+  {year:1854, cat:'law', title:'Kansas-Nebraska Act', why:'Used popular sovereignty and repealed the Missouri Compromise line.', hook:'Led to Bleeding Kansas and formation of the Republican Party.'},
+  {year:1857, cat:'case', title:'Dred Scott v. Sandford', why:'Denied Black citizenship and treated enslaved people as property.', hook:'Overturned by the 13th, 14th, and 15th Amendments.'},
+  {year:1862, cat:'law', title:'Homestead Act', why:'Granted land to settlers willing to live on and improve it.', hook:'Accelerated westward expansion after Southern states left Congress.'},
+  {year:1865, cat:'rights', title:'13th Amendment', why:'Abolished slavery in the United States.', hook:'First Reconstruction Amendment.'},
+  {year:1867, cat:'treaty', title:'Alaska Purchase', why:'The U.S. bought Alaska from Russia for $7.2 million.', hook:'Known as Seward\'s Folly before its value became clear.'},
+  {year:1868, cat:'rights', title:'14th Amendment', why:'Defined citizenship and added Due Process and Equal Protection against states.', hook:'Core amendment for incorporation and civil rights.'},
+  {year:1870, cat:'rights', title:'15th Amendment', why:'Prohibited denying the vote based on race.', hook:'Still required later enforcement through the Voting Rights Act.'},
+  {year:1883, cat:'law', title:'Pendleton Civil Service Act', why:'Moved federal hiring toward merit instead of political loyalty.', hook:'Reduced the spoils system.'},
+  {year:1887, cat:'law', title:'Interstate Commerce Act', why:'Regulated railroads and created the Interstate Commerce Commission.', hook:'First major federal regulatory agency.'},
+  {year:1896, cat:'case', title:'Plessy v. Ferguson', why:'Approved separate but equal segregation.', hook:'Overturned by Brown v. Board of Education.'},
+  {year:1898, cat:'treaty', title:'Treaty of Paris', why:'Ended the Spanish-American War and transferred Puerto Rico, Guam, and the Philippines.', hook:'Marked U.S. emergence as an overseas power.'},
+  {year:1919, cat:'case', title:'Schenck v. United States', why:'Created the clear and present danger test for speech.', hook:'Later replaced by the Brandenburg standard.'},
+  {year:1919, cat:'treaty', title:'Treaty of Versailles', why:'Ended World War I and proposed the League of Nations.', hook:'The U.S. Senate never ratified it.'},
+  {year:1920, cat:'rights', title:'19th Amendment', why:'Protected women\'s right to vote.', hook:'Major voting-rights expansion.'},
+  {year:1935, cat:'law', title:'Social Security Act', why:'Created retirement insurance, unemployment insurance, and public assistance programs.', hook:'New Deal expansion of federal social welfare.'},
+  {year:1944, cat:'case', title:'Korematsu v. United States', why:'Upheld Japanese American internment during World War II.', hook:'Widely condemned; formally repudiated in Trump v. Hawaii.'},
+  {year:1945, cat:'treaty', title:'United Nations Charter', why:'Created the United Nations for international peace and security.', hook:'U.S. joined the UN unlike the League of Nations.'},
+  {year:1947, cat:'law', title:'National Security Act', why:'Created the CIA, National Security Council, and Department of Defense structure.', hook:'Cold War-era reorganization of national security.'},
+  {year:1949, cat:'treaty', title:'NATO', why:'Created a collective defense alliance against Cold War threats.', hook:'Article 5 treats an attack on one as an attack on all.'},
+  {year:1954, cat:'case', title:'Brown v. Board of Education', why:'Held that segregated public schools are inherently unequal.', hook:'Overturned Plessy in education and energized the Civil Rights Movement.'},
+  {year:1961, cat:'case', title:'Mapp v. Ohio', why:'Applied the exclusionary rule to the states.', hook:'Illegally obtained evidence cannot be used in state criminal trials.'},
+  {year:1962, cat:'case', title:'Engel v. Vitale', why:'Struck down school-sponsored prayer.', hook:'Establishment Clause limits government religious endorsement.'},
+  {year:1962, cat:'case', title:'Baker v. Carr', why:'Allowed federal courts to hear redistricting equal-protection claims.', hook:'Opened path to one person, one vote cases.'},
+  {year:1963, cat:'case', title:'Gideon v. Wainwright', why:'Required states to provide counsel for indigent criminal defendants.', hook:'Incorporated the Sixth Amendment right to counsel.'},
+  {year:1964, cat:'law', title:'Civil Rights Act', why:'Banned discrimination in public accommodations and employment.', hook:'Upheld through Commerce Clause logic in Heart of Atlanta Motel.'},
+  {year:1964, cat:'rights', title:'24th Amendment', why:'Abolished poll taxes in federal elections.', hook:'Voting-rights expansion before the Voting Rights Act.'},
+  {year:1964, cat:'law', title:'Gulf of Tonkin Resolution', why:'Authorized broad military action in Vietnam.', hook:'Led to War Powers Resolution concerns.'},
+  {year:1965, cat:'law', title:'Voting Rights Act', why:'Banned discriminatory voting practices and required federal preclearance in covered areas.', hook:'Passed after Bloody Sunday in Selma.'},
+  {year:1965, cat:'law', title:'Medicare and Medicaid', why:'Created health programs for elderly, disabled, and low-income Americans.', hook:'LBJ Great Society programs.'},
+  {year:1965, cat:'case', title:'Griswold v. Connecticut', why:'Recognized a constitutional right to marital privacy.', hook:'Foundation for later substantive due process privacy cases.'},
+  {year:1966, cat:'case', title:'Miranda v. Arizona', why:'Required warnings about silence and counsel during custodial interrogation.', hook:'Based on Fifth and Sixth Amendment protections.'},
+  {year:1967, cat:'case', title:'Loving v. Virginia', why:'Struck down bans on interracial marriage.', hook:'Equal Protection and Due Process protect marriage rights.'},
+  {year:1967, cat:'constitution', title:'25th Amendment', why:'Set presidential succession and disability procedures.', hook:'Vice President becomes President if the President dies or is removed.'},
+  {year:1969, cat:'case', title:'Tinker v. Des Moines', why:'Protected student symbolic speech unless it causes substantial disruption.', hook:'Students do not shed rights at the schoolhouse gate.'},
+  {year:1971, cat:'case', title:'New York Times v. United States', why:'Rejected prior restraint against publishing the Pentagon Papers.', hook:'Very high bar for censoring the press.'},
+  {year:1971, cat:'rights', title:'26th Amendment', why:'Lowered the voting age to 18.', hook:'Passed during Vietnam-era debate over draft and voting.'},
+  {year:1972, cat:'case', title:'Wisconsin v. Yoder', why:'Protected Amish parents from compulsory schooling beyond eighth grade.', hook:'Free Exercise can limit state education requirements.'},
+  {year:1973, cat:'case', title:'Roe v. Wade', why:'Recognized a constitutional right to abortion under privacy and due process.', hook:'Overturned by Dobbs in 2022.'},
+  {year:1973, cat:'law', title:'War Powers Resolution', why:'Required presidential notice to Congress and limited unauthorized deployments.', hook:'Response to Vietnam and Gulf of Tonkin-era power concerns.'},
+  {year:1974, cat:'case', title:'United States v. Nixon', why:'Limited executive privilege and required Nixon to turn over tapes.', hook:'Rule of law applies to the President.'},
+  {year:1978, cat:'case', title:'Regents of UC v. Bakke', why:'Rejected racial quotas but allowed race as one admissions factor at the time.', hook:'Affirmative-action framework later changed by SFFA v. Harvard.'},
+  {year:1989, cat:'case', title:'Texas v. Johnson', why:'Held that flag burning is protected symbolic speech.', hook:'Offensive political expression can still be protected.'},
+  {year:1993, cat:'case', title:'Shaw v. Reno', why:'Limited racial gerrymandering when race predominates in district design.', hook:'Strict scrutiny applies.'},
+  {year:1995, cat:'case', title:'United States v. Lopez', why:'Limited Congress under the Commerce Clause for the first time in decades.', hook:'Guns in school zones were not commerce.'},
+  {year:2000, cat:'case', title:'Bush v. Gore', why:'Stopped the Florida recount in the 2000 presidential election.', hook:'Equal Protection issue with inconsistent recount standards.'},
+  {year:2001, cat:'law', title:'USA PATRIOT Act', why:'Expanded surveillance and intelligence powers after September 11.', hook:'Important national security versus civil liberties tension.'},
+  {year:2008, cat:'case', title:'District of Columbia v. Heller', why:'Recognized an individual Second Amendment right to keep a handgun for self-defense.', hook:'Applied to federal jurisdiction first.'},
+  {year:2010, cat:'case', title:'McDonald v. Chicago', why:'Applied the Second Amendment right from Heller to the states.', hook:'Selective incorporation through the 14th Amendment.'},
+  {year:2010, cat:'case', title:'Citizens United v. FEC', why:'Protected independent corporate political spending as speech.', hook:'Led to Super PACs.'},
+  {year:2013, cat:'case', title:'Shelby County v. Holder', why:'Struck down the Voting Rights Act preclearance coverage formula.', hook:'Weakened federal voting-rights oversight.'},
+  {year:2015, cat:'case', title:'Obergefell v. Hodges', why:'Recognized same-sex marriage as constitutionally protected.', hook:'Equal Protection and Due Process marriage case.'},
+  {year:2022, cat:'case', title:'Dobbs v. Jackson', why:'Overturned Roe v. Wade and returned abortion regulation to the states.', hook:'Changed substantive due process abortion doctrine.'},
+  {year:2022, cat:'law', title:'Respect for Marriage Act', why:'Required recognition of same-sex and interracial marriages.', hook:'Federal statutory backup after Dobbs concerns.'},
+  {year:2023, cat:'case', title:'SFFA v. Harvard', why:'Struck down race-conscious admissions programs.', hook:'Recent Equal Protection development.'}
+];
+
+const CAT_LABELS = {
+  all:'All',
+  founding:'Founding',
+  constitution:'Constitution',
+  rights:'Rights',
+  law:'Laws',
+  case:'Cases',
+  treaty:'Treaties'
+};
+
+let activeCat = 'all';
+let activeId = 0;
+
+function buildFilters() {
+  const row = document.getElementById('filters');
+  row.innerHTML = '';
+  Object.keys(CAT_LABELS).forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'chip' + (cat === activeCat ? ' on' : '');
+    btn.textContent = CAT_LABELS[cat];
+    btn.onclick = () => setCat(cat);
+    row.appendChild(btn);
+  });
+  const search = document.createElement('input');
+  search.className = 'search';
+  search.id = 'search';
+  search.type = 'search';
+  search.placeholder = 'Search timeline';
+  search.oninput = renderTimeline;
+  row.appendChild(search);
+}
+
+function setCat(cat) {
+  activeCat = cat;
+  buildFilters();
+  renderTimeline();
+}
+
+function filteredEvents() {
+  const q = (document.getElementById('search')?.value || '').trim().toLowerCase();
+  return EVENTS.filter(event => {
+    const catMatch = activeCat === 'all' || event.cat === activeCat;
+    const text = `${event.year} ${event.title} ${event.why} ${event.hook} ${CAT_LABELS[event.cat]}`.toLowerCase();
+    return catMatch && (!q || text.includes(q));
+  });
+}
+
+function renderTimeline() {
+  const list = filteredEvents();
+  const wrap = document.getElementById('timeline');
+  document.getElementById('eventCount').textContent = list.length;
+  if (!list.length) {
+    wrap.innerHTML = '<div class="empty">No timeline events match this filter.</div>';
+    document.getElementById('detail').innerHTML = '';
+    return;
+  }
+  if (!list.some(event => event.id === activeId)) activeId = list[0].id;
+  wrap.innerHTML = '';
+  list.forEach((event, index) => {
+    event.id = event.id || `${event.year}-${event.title.replace(/[^a-z0-9]+/gi,'-').toLowerCase()}`;
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.className = `event cat-${event.cat}` + (event.id === activeId ? ' active' : '');
+    item.onclick = () => setActive(event.id);
+    item.innerHTML = `
+      <div>
+        <div class="year">${event.year}</div>
+        <div class="tag">${CAT_LABELS[event.cat]}</div>
+      </div>
+      <div>
+        <div class="event-title">${event.title}</div>
+        <div class="event-copy">${event.why}</div>
+      </div>`;
+    wrap.appendChild(item);
+    if (index === 0 && !activeId) activeId = event.id;
+  });
+  const active = list.find(event => event.id === activeId) || list[0];
+  setActive(active.id, false);
+}
+
+function setActive(id, rerender = true) {
+  activeId = id;
+  const event = EVENTS.find(item => item.id === id);
+  if (!event) return;
+  if (rerender) {
+    document.querySelectorAll('.event').forEach(item => item.classList.remove('active'));
+    const all = filteredEvents();
+    const idx = all.findIndex(item => item.id === id);
+    if (idx >= 0) document.querySelectorAll('.event')[idx]?.classList.add('active');
+  }
+  const detail = document.getElementById('detail');
+  detail.dataset.cat = event.cat;
+  detail.innerHTML = `
+    <div class="detail-cat">${CAT_LABELS[event.cat]}</div>
+    <h2>${event.title}</h2>
+    <div class="detail-year">${event.year}</div>
+    <p>${event.why}</p>
+    <div class="detail-box"><strong>FCLE connection</strong>${event.hook}</div>`;
+}
+
+const thBtn = document.getElementById('themeBtn');
+function applyTheme(dark) {
+  document.documentElement[dark ? 'setAttribute' : 'removeAttribute']('data-theme', 'dark');
+  thBtn.textContent = dark ? 'Light' : 'Dark';
+  localStorage.setItem('fcleTheme', dark ? 'dark' : 'light');
+}
+function toggleTheme() { applyTheme(document.documentElement.getAttribute('data-theme') !== 'dark'); }
+
+EVENTS.sort((a,b) => a.year - b.year || a.title.localeCompare(b.title));
+EVENTS.forEach(event => { event.id = `${event.year}-${event.title.replace(/[^a-z0-9]+/gi,'-').toLowerCase()}`; });
+applyTheme(localStorage.getItem('fcleTheme') === 'dark');
+buildFilters();
+renderTimeline();
+</script>
+</body>
+</html>
